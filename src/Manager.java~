@@ -689,8 +689,6 @@ saveEveryThing();
     private void turnTime(String[] split) {
 
         //finishing
-        productTimePass();
-        removingDecayedItems();
         catsCollecting();
         showGaindProducts();
         int chickencount = 0;
@@ -1501,12 +1499,7 @@ if (fabricMakerslist.size()==1) {
         }
 
     }
-    private void productTimePass(){
-        for (Product product : onMapProduct) {
-            product.setHealth(product.getHealth()-1);
 
-        }
-    }
     private void removingDecayedItems(){
         boolean temp=false;
         int index=-1;
