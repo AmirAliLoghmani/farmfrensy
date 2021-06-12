@@ -529,8 +529,9 @@ saveEveryThing();
 
         int c = 0;
         int tem = 0;
+
         for (Egg egg : eggslist) {
-            if (egg.xVal == x && egg.yVal == y) {
+            if (egg.xVal == x && egg.yVal == y&&onMapProduct.contains(egg)) {
                 gaindproductslist.add(new Egg(egg.xVal, egg.yVal, "egg"));
 
                 tem = 1;
@@ -545,7 +546,7 @@ saveEveryThing();
         int c2 = 0;
         int tem2 = 0;
         for (Flour flour : flourslist) {
-            if (flour.xVal == x && flour.yVal == y) {
+            if (flour.xVal == x && flour.yVal == y&&onMapProduct.contains(flour)) {
                 gaindproductslist.add(new Flour(flour.xVal, flour.yVal, "flour"));
 
                 tem2 = 1;
@@ -560,7 +561,7 @@ saveEveryThing();
         int c3 = 0;
         int tem3 = 0;
         for (Fabric fabric : fabriclist) {
-            if (fabric.xVal == x && fabric.yVal == y) {
+            if (fabric.xVal == x && fabric.yVal == y&&onMapProduct.contains(fabric)) {
                 gaindproductslist.add(new Fabric(fabric.xVal, fabric.yVal, "fabric"));
 
                 tem3 = 1;
@@ -575,7 +576,7 @@ saveEveryThing();
         int c4 = 0;
         int tem4 = 0;
         for (Feather feather : featherslist) {
-            if (feather.xVal == x && feather.yVal == y) {
+            if (feather.xVal == x && feather.yVal == y&&onMapProduct.contains(feather)) {
                 gaindproductslist.add(new Fabric(feather.xVal, feather.yVal, "feather"));
 
                 tem4 = 1;
@@ -590,7 +591,7 @@ saveEveryThing();
         int c5 = 0;
         int tem5 = 0;
         for (Milk milk : milkslist) {
-            if (milk.xVal == x && milk.yVal == y) {
+            if (milk.xVal == x && milk.yVal == y&&onMapProduct.contains(milk)) {
                 gaindproductslist.add(new Fabric(milk.xVal, milk.yVal, "milk"));
 
                 tem5 = 1;
@@ -605,7 +606,7 @@ saveEveryThing();
         int c6 = 0;
         int tem6 = 0;
         for (Bread bread : breadslist) {
-            if (bread.xVal == x && bread.yVal == y) {
+            if (bread.xVal == x && bread.yVal == y&&onMapProduct.contains(bread)) {
                 gaindproductslist.add(new Bread(bread.xVal, bread.yVal, "bread"));
 
                 tem6 = 1;
@@ -620,7 +621,7 @@ saveEveryThing();
         int c7 = 0;
         int tem7 = 0;
         for (BearProduct bearProduct : bearProductslist) {
-            if (bearProduct.xVal == x && bearProduct.yVal == y) {
+            if (bearProduct.xVal == x && bearProduct.yVal == y&&onMapProduct.contains(bearProduct)) {
                 gaindproductslist.add(new BearProduct(bearProduct.xVal, bearProduct.yVal, "bearProduct"));
 
                 tem7 = 1;
@@ -635,7 +636,7 @@ saveEveryThing();
         int c8 = 0;
         int tem8 = 0;
         for (Clothe clothe : clotheslist) {
-            if (clothe.xVal == x && clothe.yVal == y) {
+            if (clothe.xVal == x && clothe.yVal == y&&onMapProduct.contains(clothe)) {
                 gaindproductslist.add(new Clothe(clothe.xVal, clothe.yVal, "clothe"));
 
                 tem8 = 1;
@@ -650,7 +651,7 @@ saveEveryThing();
         int c9 = 0;
         int tem9 = 0;
         for (IceCream iceCream : icecreamslist) {
-            if (iceCream.xVal == x && iceCream.yVal == y) {
+            if (iceCream.xVal == x && iceCream.yVal == y&&onMapProduct.contains(iceCream)) {
                 gaindproductslist.add(new IceCream(iceCream.xVal, iceCream.yVal, "iceCream"));
 
                 tem9 = 1;
@@ -668,7 +669,7 @@ saveEveryThing();
         int c10 = 0;
         int tem10 = 0;
         for (LionProduct lionProduct : lionProductslist) {
-            if (lionProduct.xVal == x && lionProduct.yVal == y) {
+            if (lionProduct.xVal == x && lionProduct.yVal == y&&onMapProduct.contains(lionProduct)) {
                 gaindproductslist.add(new LionProduct(lionProduct.xVal, lionProduct.yVal, "lionproduct"));
 
                 tem10 = 1;
@@ -682,6 +683,7 @@ saveEveryThing();
         for (Product product : gaindproductslist) {
             System.out.println(product.xVal + " " + product.yVal + "  " + product.getName());
         }
+        removingItemsOnTheSpot(x,y);
 
 
     }
