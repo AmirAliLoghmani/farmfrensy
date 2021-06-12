@@ -24,17 +24,21 @@ public class Manager {
     ArrayList<Product> onMapProduct = new ArrayList<>();
     ArrayList<Integer> bearArrivalTime = new ArrayList<>();
     ArrayList<Integer> lionArrivalTime = new ArrayList<>();
+    ArrayList<Integer> tigerArrivalTime = new ArrayList<>();
+
     Player currentPlayer;
     ArrayList<WindMill> windMillslist = new ArrayList<WindMill>();
     ArrayList<FabricMaker> fabricMakerslist = new ArrayList<FabricMaker>();
     ArrayList<BearProduct> bearProductslist = new ArrayList<>();
     ArrayList<LionProduct> lionProductslist = new ArrayList<>();
+    ArrayList<LionProduct> tigerProductslist = new ArrayList<>();
     ArrayList<Bakery> bakeryslist = new ArrayList<Bakery>();
     ArrayList<IceCreamMaker> iceCreamMakerslist = new ArrayList<IceCreamMaker>();
     ArrayList<Tailoring> tailoryslist = new ArrayList<Tailoring>();
     ArrayList<CartoonMilkMaker> cartoonMilkMakerslist = new ArrayList<CartoonMilkMaker>();
     ArrayList<Bear> bearslist = new ArrayList<Bear>();
     ArrayList<Lion> lionslist = new ArrayList<Lion>();
+    ArrayList<Tiger> tigerslist = new ArrayList<Tiger>();
     ArrayList<Product> gaindproductslist = new ArrayList<Product>();
     ArrayList<Player> playersList = new ArrayList<Player>();
     //ArrayList<Animal> animalslist = new ArrayList<Animal>();
@@ -1119,9 +1123,9 @@ if (fabricMakerslist.size()==1) {
                         defenderAnimal.xVal += 1;
                     else defenderAnimal.xVal -= 1;
                 case 1:
-                    if (defenderAnimal.yVal > 0)
-                        defenderAnimal.yVal -= 1;
-                    else defenderAnimal.yVal += 1;
+                    if (defenderAnimal.xVal > 0)
+                        defenderAnimal.xVal -= 1;
+                    else defenderAnimal.xVal += 1;
                 case 2:
                     if (defenderAnimal.yVal < 5)
                         defenderAnimal.yVal += 1;
@@ -1147,9 +1151,9 @@ if (fabricMakerslist.size()==1) {
                         bear.xVal += 1;
                     else bear.xVal -= 1;
                 case 1:
-                    if (bear.yVal > 0)
-                        bear.yVal -= 1;
-                    else bear.yVal += 1;
+                    if (bear.xVal > 0)
+                        bear.xVal -= 1;
+                    else bear.xVal += 1;
                 case 2:
                     if (bear.yVal < 5)
                         bear.yVal += 1;
@@ -1175,9 +1179,9 @@ if (fabricMakerslist.size()==1) {
                         lion.xVal += 1;
                     else lion.xVal -= 1;
                 case 1:
-                    if (lion.yVal > 0)
-                        lion.yVal -= 1;
-                    else lion.yVal += 1;
+                    if (lion.xVal > 0)
+                        lion.xVal -= 1;
+                    else lion.xVal += 1;
                 case 2:
                     if (lion.yVal < 5)
                         lion.yVal += 1;
@@ -1190,8 +1194,35 @@ if (fabricMakerslist.size()==1) {
                     break;
             }
         }
+        for (Tiger tiger : tigerslist) {
+
+            {
+                int tem = random.nextInt(4);
+                System.out.println(tem);
 
 
+                switch (tem) {
+                    case 0:
+                        if (tiger.xVal < 5)
+                            tiger.xVal += 1;
+                        else tiger.xVal -= 1;
+                    case 1:
+                        if (tiger.xVal > 0)
+                            tiger.xVal -= 1;
+                        else tiger.xVal += 1;
+                    case 2:
+                        if (tiger.yVal < 5)
+                            tiger.yVal += 1;
+                        else tiger.yVal -= 1;
+                    case 3:
+                        if (tiger.yVal > 0)
+                            tiger.yVal -= 1;
+                        else tiger.yVal += 1;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     private void putBear() {
@@ -1201,6 +1232,10 @@ if (fabricMakerslist.size()==1) {
         }
 
         for (Integer integer : lionArrivalTime) {
+            if (integer == currentTurn)
+                lionslist.add(new Lion("lion"));
+        }
+        for (Integer integer : tigerArrivalTime) {
             if (integer == currentTurn)
                 lionslist.add(new Lion("lion"));
         }
@@ -1266,7 +1301,19 @@ if (fabricMakerslist.size()==1) {
                     }
                 }
         }
-
+        for (Tiger tiger : tigerslist) {
+            if (tiger.getxVal() == xval && tiger.getyVal() == yval)
+                if (cageLevel == 0) {
+                    if (tiger.health == 1) {
+                        gaindproductslist.add(maketigerProduct(tiger));
+                        tigerslist.remove(tiger);
+                        return;
+                    } else {
+                        tiger.health--;
+                        cageLevel = 1;
+                    }
+                }
+        }
 
     }
     private void showGaindProducts(){
@@ -1286,6 +1333,11 @@ if (fabricMakerslist.size()==1) {
         LionProduct lionProduct = new LionProduct(lion.xVal, lion.yVal, "lionProduct");
         onMapProduct.add(new LionProduct(lion.xVal, lion.yVal, "lionProduct"));
         return lionProduct;
+    }
+    private Product maketigerProduct(Tiger tiger) {
+        TigerProduct tigerProduct = new TigerProduct(tiger.xVal, tiger.yVal, "tigerProduct");
+        onMapProduct.add(new TigerProduct(tiger.xVal, tiger.yVal, "tigerProduct"));
+        return tigerProduct;
     }
 
     private void buyAnimal(String[] split) {
@@ -1464,7 +1516,7 @@ if (fabricMakerslist.size()==1) {
         while (!temp){
             for (Product product : onMapProduct) {
                 if(product.xVal==x&&product.yVal==y){
-                    index=productsOnTheMap.indexOf(product);
+                    index=onMapProduct.indexOf(product);
                     break;
                 }
             }
