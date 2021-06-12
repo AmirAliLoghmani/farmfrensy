@@ -685,6 +685,7 @@ saveEveryThing();
     private void turnTime(String[] split) {
 
         //finishing
+        catsCollecting();
         showGaindProducts();
         int chickencount = 0;
         int turkeycount = 0;
@@ -1446,4 +1447,32 @@ if (fabricMakerslist.size()==1) {
         }
 
     }
+
+
+
+    private void catCollectingItems(Cat cat){
+        removingItemsOnTheSpot(cat.xVal, cat.yVal);
+    }
+    private void catsCollecting(){
+        for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+            if(defenderAnimal instanceof Cat) catCollectingItems((Cat)defenderAnimal);
+        }
+    }
+    private void removingItemsOnTheSpot(int x,int y){
+        boolean temp=false;
+        int index=-1;
+        while (!temp){
+            for (Product product : onMapProduct) {
+                if(product.xVal==x&&product.yVal==y){
+                    index=productsOnTheMap.indexOf(product);
+                    break;
+                }
+            }
+            if(index==-1) temp=true;
+            else {onMapProduct.remove(index);
+                index=-1;
+            }
+        }
+    }
+
 }
