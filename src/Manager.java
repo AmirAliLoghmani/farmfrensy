@@ -31,7 +31,7 @@ public class Manager {
     ArrayList<FabricMaker> fabricMakerslist = new ArrayList<FabricMaker>();
     ArrayList<BearProduct> bearProductslist = new ArrayList<>();
     ArrayList<LionProduct> lionProductslist = new ArrayList<>();
-    ArrayList<LionProduct> tigerProductslist = new ArrayList<>();
+    ArrayList<TigerProduct> tigerProductslist = new ArrayList<>();
     ArrayList<Bakery> bakeryslist = new ArrayList<Bakery>();
     ArrayList<IceCreamMaker> iceCreamMakerslist = new ArrayList<IceCreamMaker>();
     ArrayList<Tailoring> tailoryslist = new ArrayList<Tailoring>();
@@ -54,7 +54,7 @@ public class Manager {
     ArrayList<DomesticAnimal> domesticAnimalsList = new ArrayList<DomesticAnimal>();
     ArrayList<DefenderAnimal> defenderAnimalslist = new ArrayList<DefenderAnimal>();
 
-    Scanner scanner = new Scanner(System.in);
+
     String[][] map = new String[6][6];
     Random random = new Random();
     WaterTank waterTank;
@@ -65,282 +65,28 @@ public class Manager {
     }
 
 
-    public boolean loginProcess() {
-        System.out.println("enter your Username.");
-        String username = scanner.nextLine();
-        Player p = null;
-        String pass = "";
-        int tem = 0;
-        int lvl = 0;
-        for (Player player : playersList) {
-            if (player.getUserName().equals(username)) {
-                p = player;
-                pass = player.getPassWord();
-                lvl = player.getLevel();
-                tem = 1;
-            }
-        }
-        if (tem == 0) {
-            System.out.println("no player found");
-            return false;
-        }
-        System.out.println("enter password...");
-        if (pass.equals(scanner.nextLine())) {
-            currentLevel = lvl;
-            currentPlayer = p;
-            startPanel();
-            return true;
-        }
-        System.out.println("wrong password");
-        return false;
 
 
-    }
-
-    public boolean signUpProcess() {
-
-        System.out.println("enter your username.");
-        int tem = 0;
-        String username = scanner.nextLine();
-        for (Player player : playersList) {
-            if (player.getUserName().equals(username)) {
-                System.out.println("already existing!!!");
-                tem = 1;
-                return false;
-                // break;
-            }
-        }
-
-        System.out.println("enter the password you want to have!");
-        String pass = scanner.nextLine();
-        playersList.add(currentPlayer = new Player(username, pass, 1));
-        // FileWriter fw = new FileWriter("users.txt");
-        //BufferedWriter bw = new BufferedWriter(fw);
-           /* for (Player player : playersList) {
-                bw.append(player.getUserName()+" "+player.getPassWord()+player.getLevel()+"\n");
-            }
-                    //bw.append(username + " " + pass);
-                    bw.close();*/
 
 
-        for (Player player : playersList) {
-            System.out.println(player.getUserName());
-        }
-        currentLevel = 1;
-        startPanel();
-        return true;
-    }
-
-    public void startPanel() {
-        System.out.println("starting..........");
-        try {
-            if (status.equals("finished")) {
-                System.out.println("dude you finished the whole game");
-                return;
-            }
-            System.out.println("current level" + currentLevel);
-            FileReader fileReader3 = new FileReader("missions.txt");
-            BufferedReader bufferedReader3 = new BufferedReader(fileReader3);
-            numberOfLevels = Integer.parseInt(bufferedReader3.readLine());
-            String temp;
-            int tt = 0;
-            while (tt == 0) {
-                if ((temp = bufferedReader3.readLine()).equals("end")) {
-                    System.out.println("file ended");
-                    status = "finished";
-                   // startPanel();
-                    tt = 1;
-                    return;
-
-                    //return;
-                } else if ((temp).startsWith("level")) {
-                    if (Integer.parseInt(temp.split("\\s")[1]) == currentLevel)
-                        tt = 1;
-                }
-
-            }
-
-            //currentLevel = Integer.parseInt(bufferedReader3.readLine().split("\\s")[1]);
-            initialCoins = Integer.parseInt(bufferedReader3.readLine());
-            numberOfTasks = Integer.parseInt(bufferedReader3.readLine());
-            System.out.println("nom of tasks  " + numberOfTasks);
-            String goal;
-            for (int i = 0; i < numberOfTasks; i++) {
-                System.out.println("1");
-                goal = bufferedReader3.readLine();
-                if (goal.startsWith("chicken")) {
-                    System.out.println("2");
-                    System.out.println("chicken");
-                    chickenGoal = Integer.parseInt(goal.split("\\s")[1]);
-                } else if (goal.startsWith("turkey"))
-                    turkeyGoal = Integer.parseInt(goal.split("\\s")[1]);
-                    //  else if ((goal = bufferedReader3.readLine()).startsWith("buffalo"))
-                    //    buffaloGoal = Integer.parseInt(goal.split("\\s")[1]);
-                else if (goal.startsWith("coins")) {
-                    System.out.println("coin");
-                    System.out.println("3");
-                    coinGoal = Integer.parseInt(goal.split("\\s")[1]);
-                }
-            }
-            //System.out.println(bufferedReader3.readLine());
-            numberOfWildAnimals = Integer.parseInt(bufferedReader3.readLine());
-            String tem;
-            for (int i = 0; i < numberOfWildAnimals; i++) {
-                tem = bufferedReader3.readLine();
-                if (tem.startsWith("bear"))
-                    bearArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
-                if (tem.startsWith("lion"))
-                    lionArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
-            }
-
-            maxTime = Integer.parseInt(bufferedReader3.readLine());
-            prizeEndingQuick = Integer.parseInt(bufferedReader3.readLine());
-
-            currentPlayer.setMoney(initialCoins);
-            bufferedReader3.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        System.out.println("1 : Start\n2: Log out\n3: Settings");
-        String choice = scanner.nextLine();
-        if (choice.equals("1")) {
-            for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 6; j++) {
-                    map[i][j] = "0";
-                }
-            }
-            waterTank = new WaterTank(0);
-            String input;
-            //test
-
-                    //test end
-            String[] split;
-            while (!((input = scanner.nextLine()).equals("exit"))) {
-                split = input.split("\\s");
-                if (input.startsWith("BUY")) {
-                    buyAnimal(split);
-                } else if (input.startsWith("WELL"))
-                    wellWater();
-                else if (input.startsWith("PLANT"))
-                    plant(split);
-                else if (input.startsWith("CAGE"))
-                    putCage(split);
-                else if (input.startsWith("TURN"))
-                    turnTime(split);
-                else if (input.startsWith("PICK UP"))
-                    pickUpProperty(split);
-                else if (input.startsWith("MAKE"))
-                    makingBuilding(split);
-                else if (input.startsWith("WORK"))
-                    workingBuilding(split);
-                else if (input.startsWith("TRUCK LOAD"))
-                    loadingTruck(split);
-                else if (input.startsWith("TRUCK GO"))
-                    sendingTruck();
-                if (status.equals("win")||status.equals("finished")) {
-                    System.out.println("you finished the level");
-                    status = "progress";
-                    currentLevel++;
-                    readingOrderFile();
-                    saveEveryThing();
-                    //startPanel();
-                }
-                if (status.equals("finished"))
-                   // saveEveryThing();
-                    return;
-            }
-        } else if (choice.equals("2")) {
-            saveEveryThing();
-            logoutProcess();
-        } else if (choice.equals("3")) {
-saveEveryThing();
-        }
-    }
-
-    private void readingOrderFile(){
-        try {
-            deleteEveryThing();
-
-            System.out.println("current level" + currentLevel);
-            FileReader fileReader3 = new FileReader("missions.txt");
-            BufferedReader bufferedReader3 = new BufferedReader(fileReader3);
-            numberOfLevels = Integer.parseInt(bufferedReader3.readLine());
-            String temp;
-            int tt = 0;
-            while (tt == 0) {
-                if ((temp = bufferedReader3.readLine()).equals("end")) {
-                    System.out.println("file ended");
-                    status = "finished";
-                   // startPanel();
-                    tt = 1;
-                    return;
-
-                    //return;
-                } else if ((temp).startsWith("level")) {
-                    if (Integer.parseInt(temp.split("\\s")[1]) == currentLevel)
-                        tt = 1;
-                }
-
-            }
-
-            //currentLevel = Integer.parseInt(bufferedReader3.readLine().split("\\s")[1]);
-            initialCoins = Integer.parseInt(bufferedReader3.readLine());
-            numberOfTasks = Integer.parseInt(bufferedReader3.readLine());
-            System.out.println("nom of tasks  " + numberOfTasks);
-            String goal;
-            for (int i = 0; i < numberOfTasks; i++) {
-                System.out.println("1");
-                goal = bufferedReader3.readLine();
-                if (goal.startsWith("chicken")) {
-                    System.out.println("2");
-                    System.out.println("chicken");
-                    chickenGoal = Integer.parseInt(goal.split("\\s")[1]);
-                } else if (goal.startsWith("turkey"))
-                    turkeyGoal = Integer.parseInt(goal.split("\\s")[1]);
-                    //  else if ((goal = bufferedReader3.readLine()).startsWith("buffalo"))
-                    //    buffaloGoal = Integer.parseInt(goal.split("\\s")[1]);
-                else if (goal.startsWith("coins")) {
-                    System.out.println("coin");
-                    System.out.println("3");
-                    coinGoal = Integer.parseInt(goal.split("\\s")[1]);
-                }
-            }
-            //System.out.println(bufferedReader3.readLine());
-            numberOfWildAnimals = Integer.parseInt(bufferedReader3.readLine());
-            String tem;
-            for (int i = 0; i < numberOfWildAnimals; i++) {
-                tem = bufferedReader3.readLine();
-                if (tem.startsWith("bear"))
-                    bearArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
-                if (tem.startsWith("lion"))
-                    lionArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
-            }
-
-            maxTime = Integer.parseInt(bufferedReader3.readLine());
-            prizeEndingQuick = Integer.parseInt(bufferedReader3.readLine());
-
-            currentPlayer.setMoney(initialCoins);
-            bufferedReader3.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void deleteEveryThing() {
+    public void deleteEveryThing() {
         domesticAnimalsList.clear();
         windMillslist.clear();
         fabricMakerslist.clear();
         bearProductslist.clear();
+        tigerProductslist.clear();
+        lionProductslist.clear();
         lionslist.clear();
+        bearslist.clear();
+        tigerslist.clear();
         bakeryslist.clear();
         iceCreamMakerslist.clear();
         tailoryslist.clear();
         cartoonMilkMakerslist.clear();
         bearslist.clear();
         lionArrivalTime.clear();
+        bearArrivalTime.clear();
+        tigerArrivalTime.clear();
         gaindproductslist.clear();
         eggslist.clear();
         milkslist.clear();
@@ -357,7 +103,7 @@ saveEveryThing();
 
     }
 
-    private void sendingTruck() {
+    public void sendingTruck() {
         if (truck.productListTrans.size() == 0) {
             System.out.println("truck is empty !!!");
         } else {
@@ -366,7 +112,7 @@ saveEveryThing();
 
     }
 
-    private void loadingTruck(String[] split) {
+    public void loadingTruck(String[] split) {
         System.out.println("gaind pros:");
         for (Product product : gaindproductslist) {
             System.out.println(product);
@@ -393,7 +139,7 @@ saveEveryThing();
 
     }
 
-    private void makingBuilding(String[] split) {
+    public void makingBuilding(String[] split) {
 
 
 
@@ -458,7 +204,7 @@ saveEveryThing();
         }
     }
 
-    private void workingBuilding(String[] split) {
+    public void workingBuilding(String[] split) {
         // windMillslist.add(new WindMill());
 
         if (split[1].equals("windmill")) {
@@ -523,7 +269,7 @@ saveEveryThing();
         }
     }
 
-    private void pickUpProperty(String[] split) {
+    public void pickUpProperty(String[] split) {
         int x = Integer.parseInt(split[2]);
         int y = Integer.parseInt(split[3]);
 
@@ -662,9 +408,7 @@ saveEveryThing();
         if (tem9 == 1)
             icecreamslist.remove(c9);
         System.out.println("gained products : ");
-        for (Product product : gaindproductslist) {
-            System.out.println(product.xVal + " " + product.yVal + "  " + product.getName());
-        }
+
 
         int c10 = 0;
         int tem10 = 0;
@@ -679,16 +423,31 @@ saveEveryThing();
         }
         if (tem10 == 1)
             lionProductslist.remove(c10);
+
+        int c11 = 0;
+        int tem11 = 0;
+        for (TigerProduct tigerProduct : tigerProductslist) {
+            if (tigerProduct.xVal == x && tigerProduct.yVal == y&&onMapProduct.contains(tigerProduct)) {
+                gaindproductslist.add(new LionProduct(tigerProduct.xVal, tigerProduct.yVal, "tigerproduct"));
+
+                tem11 = 1;
+                break;
+            }
+            c11++;
+        }
+        if (tem11 == 1)
+            tigerProductslist.remove(c11);
+        removingItemsOnTheSpot(x,y);
         System.out.println("gained products : ");
         for (Product product : gaindproductslist) {
             System.out.println(product.xVal + " " + product.yVal + "  " + product.getName());
         }
-        removingItemsOnTheSpot(x,y);
+
 
 
     }
 
-    private void turnTime(String[] split) {
+    public void turnTime(String[] split) {
 
         //finishing
         productTimePass();
@@ -1273,7 +1032,7 @@ if (fabricMakerslist.size()==1) {
             }
     }
 
-    private void putCage(String[] split) {
+    public void putCage(String[] split) {
         int xval = Integer.parseInt(split[1]);
         int yval = Integer.parseInt(split[2]);
         map[xval][yval] = "cage";
@@ -1344,7 +1103,7 @@ if (fabricMakerslist.size()==1) {
         return tigerProduct;
     }
 
-    private void buyAnimal(String[] split) {
+    public void buyAnimal(String[] split) {
 
         if (split[1].equals("dog")) {
             if (currentPlayer.getMoney() < 100) {
@@ -1410,7 +1169,7 @@ if (fabricMakerslist.size()==1) {
 
     }
 
-    private void plant(String[] split) {
+    public void plant(String[] split) {
         if (waterTank.getLevelOfWater() < 1) {
             System.out.println("no water");
         } else {
@@ -1427,7 +1186,7 @@ if (fabricMakerslist.size()==1) {
         }
     }
 
-    private void wellWater() {
+    public void wellWater() {
         //waterTank.setLevelOfWater(5);
         if (waterTank.getLevelOfWater() != 0)
             System.out.println("you have still water in tank");
@@ -1435,9 +1194,7 @@ if (fabricMakerslist.size()==1) {
             waterTank.setLevelOfRefulling(4);
     }
 
-    private void logoutProcess() {
-        return;
-    }
+
 
     public void updateEveryThing() {
         try {
@@ -1459,50 +1216,7 @@ if (fabricMakerslist.size()==1) {
 
     }
 
-    public void saveEveryThing() {
-        try {
-            FileWriter fw = new FileWriter("users.txt");
-            BufferedWriter bw = new BufferedWriter(fw);
-            for (Player player : playersList) {
-                bw.append(player.getUserName() + " " + player.getPassWord() + " " + (player.getLevel()-1) + "\n");
-            }
-            //bw.append(username + " " + pass);
-            bw.close();
 
-            FileWriter fw2 = new FileWriter("animals.txt");
-            BufferedWriter bw2 = new BufferedWriter(fw2);
-            for (Animal animal : domesticAnimalsList) {
-                bw2.append(animal.getName() + " " + animal.getSpeed() + " " + animal.getxVal() + " " + animal.getyVal() + "\n");
-                System.out.println(animal.getxVal());
-            }
-            bw2.close();
-
-            /*for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 6; j++) {
-                    System.out.print(map[i][j]);
-                }
-                System.out.println();
-            }*/
-            System.out.println("animals : ");
-            for (Animal animal : domesticAnimalsList) {
-                System.out.println(animal.getName());
-                System.out.println(animal.getxVal());
-                System.out.println(animal.getyVal());
-
-            }
-            System.out.println("eggs");
-            for (Egg egg : eggslist) {
-                System.out.print(egg.xVal + "  ");
-                System.out.println(egg.yVal);
-
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
     private void productTimePass(){
         for (Product product : onMapProduct) {
             product.setHealth(product.getHealth()-1);
