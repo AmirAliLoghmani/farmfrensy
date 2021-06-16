@@ -10,5 +10,7 @@ public class WindMill extends Building {
         status=0;
         xVal = random.nextInt(6);
         yVal = random.nextInt(6);
+        updated=false;
+        twoProduct=false;
     }
 }

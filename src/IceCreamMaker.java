@@ -6,5 +6,7 @@ public class IceCreamMaker extends Building{
         status=0;
         xVal = 3;
         yVal = 0;
+        updated=false;
+        twoProduct=false;
     }
 }

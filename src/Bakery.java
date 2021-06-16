@@ -6,5 +6,7 @@ public class Bakery extends Building{
         status=0;
         xVal = 4;
         yVal = 0;
+        updated=false;
+        twoProduct=false;
     }
 }

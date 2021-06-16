@@ -43,7 +43,7 @@ public class InputProcessor {
         manager.updateEveryThing();
         boolean checking = false;
 
-              while (true) {
+        while (true) {
             System.out.println("1 : Log in");
             System.out.println("2 : Sign Up");
             if (console.nextLine().equals("1"))
@@ -51,7 +51,7 @@ public class InputProcessor {
             else if (console.nextLine().equals("2"))
                 checking = signUpProcess();
             //if (checking)
-              //  break;
+            //  break;
 
         }
 
@@ -133,38 +133,6 @@ public class InputProcessor {
         }
 
     }
-    private void processPutCage(String split[]){
-        if(split.length==3) manager.putCage(split);
-        else Messages.invalidCommandMessage();
-    }
-    private void processBuy(String split[]){
-        if(split.length==2) manager.buyAnimal(split);
-        else Messages.invalidCommandMessage();
-    }
-
-    private void processPlant(String split[]){
-        if (split.length==3) manager.plant(split);
-        else Messages.invalidCommandMessage();
-    }
-    public void processTurnTime(String split[]){
-        if (split.length==2) manager.turnTime(split);
-        else Messages.invalidCommandMessage();
-    }
-    public void processPickUp(String split[]){
-        if (split.length==3) manager.pickUpProperty(split);
-        else Messages.invalidCommandMessage();
-    }
-    public void processMakeBuilding(String split[]){
-        if (split.length==2) manager.makingBuilding(split);
-        else Messages.invalidCommandMessage();
-    }
-    public void processWorkingBuilding(String split[]){
-        if(split.length==2)manager.workingBuilding(split);
-    }
-    public void processLoadTruck(String split[]){
-        if(split.length==3) manager.loadingTruck(split);
-        else Messages.invalidCommandMessage();
-    }
 
     public void startPanel() {
         Messages.startMessage();
@@ -243,7 +211,7 @@ public class InputProcessor {
         if (choice.equals("1")) {
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 6; j++) {
-                    manager.map[i][j] = "0";
+                    manager.grassMap[i][j] = 0;
                 }
             }
             manager.waterTank = new WaterTank(0);
@@ -270,14 +238,20 @@ public class InputProcessor {
                     processMakeBuilding(split);
                 else if (input.toUpperCase().startsWith("WORK"))
                     processWorkingBuilding(split);
+                else if (input.toUpperCase().startsWith("UPDATE"))
+                    processUpdateBuilding(split);
                 else if (input.toUpperCase().startsWith("TRUCK LOAD"))
                     processLoadTruck(split);
-                    // TODO: 6/13/2021 unloadTruck
+                else if (input.toUpperCase().startsWith("TRUCK UNLOAD"))
+                    processUnloadTruck(split);
+
                 else if (input.equalsIgnoreCase("TRUCK GO"))
                     manager.sendingTruck();
                 if (manager.status.equals("win")||manager.status.equals("finished")) {
                     System.out.println("you finished the level");
+                    manager.log.infoLog(manager.currentPlayer.getUserName(),"level is finished");
                     manager.status = "progress";
+                    //if(manager.currentLevel==manager.lastLevelThatIsFinished) manager.lastLevelThatIsFinished+=1;
                     manager.currentLevel++;
                     readingOrderFile();
                     saveEveryThing();
@@ -297,7 +271,7 @@ public class InputProcessor {
 
     private void readingOrderFile(){
         try {
-           manager. deleteEveryThing();
+            manager. deleteEveryThing();
 
             System.out.println("current level" + manager.currentLevel);
             FileReader fileReader3 = new FileReader("missions.txt");
@@ -367,4 +341,83 @@ public class InputProcessor {
     private void logoutProcess() {
         return;
     }
+
+
+
+
+    private void processPutCage(String split[]){
+        if(split.length==3) manager.putCage(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    private void processBuy(String split[]){
+        if(split.length==2) manager.buyAnimal(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    private void processPlant(String split[]){
+        if (split.length==3) manager.plant(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    public void processTurnTime(String split[]){
+        if (split.length==2) manager.turnTimes(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    public void processPickUp(String split[]){
+        if (split.length==4) manager.pickUpProperty(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+
+        }
+    }
+    public void processMakeBuilding(String split[]){
+        if (split.length==2) manager.makingBuilding(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    public void processWorkingBuilding(String split[]){
+        if(split.length==2)manager.workingBuilding(split);
+        else if (split.length==3) manager.workingBuildingWithUpdate(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    public void processLoadTruck(String split[]){
+        if(split.length==3) manager.loadingTruck(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    public void processUnloadTruck(String split[]){
+        if(split.length==3) manager.unloadTruck(split);
+        else {
+            Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+        }
+    }
+    public void processUpdateBuilding(String split[]){
+        if(split.length==2) manager.updateBuilding(split);
+        else {Messages.invalidCommandMessage();
+            manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
+
+        }
+    }
 }
+
+
+

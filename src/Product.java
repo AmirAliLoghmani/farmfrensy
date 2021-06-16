@@ -4,6 +4,7 @@ public class Product {
     protected String name;
     protected int price;
     protected int health;
+    protected int size;
 
     public String getName() {
         return name;

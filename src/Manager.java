@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -12,6 +13,7 @@ public class Manager {
     int maxTime;
     int prizeEndingQuick;
     int currentLevel;
+    //int lastLevelThatIsFinished;
     int cageLevel = 0;
     int numberOfLevels;
     int initialCoins;
@@ -21,6 +23,7 @@ public class Manager {
     int buffaloGoal = 0;
     int coinGoal = 0;
     int numberOfWildAnimals = 0;
+    Log log;
     ArrayList<Product> onMapProduct = new ArrayList<>();
     ArrayList<Integer> bearArrivalTime = new ArrayList<>();
     ArrayList<Integer> lionArrivalTime = new ArrayList<>();
@@ -53,9 +56,10 @@ public class Manager {
     ArrayList<Fabric> fabriclist = new ArrayList<>();
     ArrayList<DomesticAnimal> domesticAnimalsList = new ArrayList<DomesticAnimal>();
     ArrayList<DefenderAnimal> defenderAnimalslist = new ArrayList<DefenderAnimal>();
+    ArrayList<WildAnimal> wildAnimalsList=new ArrayList<>();
 
-
-    String[][] map = new String[6][6];
+    //String[][] map = new String[6][6];
+    int[][] grassMap=new int[6][6];
     Random random = new Random();
     WaterTank waterTank;
     Truck truck = new Truck();
@@ -63,12 +67,6 @@ public class Manager {
     public void nextLevel() {
 
     }
-
-
-
-
-
-
     public void deleteEveryThing() {
         domesticAnimalsList.clear();
         windMillslist.clear();
@@ -105,39 +103,20 @@ public class Manager {
 
     public void sendingTruck() {
         if (truck.productListTrans.size() == 0) {
-            System.out.println("truck is empty !!!");
+          Messages.truckSentFailedMessage();
+          log.errorLog(currentPlayer.getUserName(),"truck sending failed.Truck storage is empty");
+
         } else {
             truck.refullingLevel = truck.neededTime;
+            Messages.truckSentMessage();
+            log.infoLog(currentPlayer.getUserName(),"Truck  was sent successfully");
         }
 
-    }
+    }// TODO: 6/17/2021
 
-    public void loadingTruck(String[] split) {
-        System.out.println("gaind pros:");
-        for (Product product : gaindproductslist) {
-            System.out.println(product);
-        }
-        if (truck.productListTrans.size() > 15) {
-            System.out.println("truck is full !!!");
-        } else {
-            String name = split[2];
-            for (Product product : gaindproductslist) {
-                if (product.name.equals(name)) {
-                    truck.productListTrans.add(product);
-                    gaindproductslist.remove(product);
-                    break;
-                }
-            }
-            for (Product product : gaindproductslist) {
-                System.out.println(product.xVal + " " + product.yVal + "  " + product.getName());
-            }
-            for (Product productListTran : truck.productListTrans) {
-                System.out.println(productListTran.xVal + " " + productListTran.yVal + "   " + productListTran.getName());
-            }
 
-        }
 
-    }
+
 
     public void makingBuilding(String[] split) {
 
@@ -147,10 +126,13 @@ public class Manager {
             if (currentPlayer.getMoney() >= 150)
                 currentPlayer.setMoney(currentPlayer.getMoney() - 150);
             else {
-                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
                 return;
             }
             windMillslist.add(new WindMill());
+            Messages.buildingAddedSuccessfullyMessage();
+            log.infoLog(currentPlayer.getUserName(),"building added successfully");
         }
 
 
@@ -158,10 +140,12 @@ public class Manager {
             if (currentPlayer.getMoney() >= 250)
                 currentPlayer.setMoney(currentPlayer.getMoney() - 250);
             else {
-                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
                 return;
             }
-
+            Messages.buildingAddedSuccessfullyMessage();
+            log.infoLog(currentPlayer.getUserName(),"building added successfully");
             fabricMakerslist.add(new FabricMaker());
         }
         else if (split[1].equals("bakery")) {
@@ -169,290 +153,755 @@ public class Manager {
             if (currentPlayer.getMoney() >= 250)
                 currentPlayer.setMoney(currentPlayer.getMoney() - 250);
             else {
-                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
                 return;
             }
+            Messages.buildingAddedSuccessfullyMessage();
+            log.infoLog(currentPlayer.getUserName(),"building added successfully");
             bakeryslist.add(new Bakery());
 
         } else if (split[1].equals("tailoring")) {
             if (currentPlayer.getMoney() >= 400)
                 currentPlayer.setMoney(currentPlayer.getMoney() - 400);
             else {
-                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
                 return;
             }
+            Messages.buildingAddedSuccessfullyMessage();
+            log.infoLog(currentPlayer.getUserName(),"building added successfully");
             tailoryslist.add(new Tailoring());
 
         } else if (split[1].equals("iceCreamMaker")) {
             if (currentPlayer.getMoney() >= 550)
                 currentPlayer.setMoney(currentPlayer.getMoney() - 550);
             else {
-                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
                 return;
             }
+            Messages.buildingAddedSuccessfullyMessage();
+            log.infoLog(currentPlayer.getUserName(),"building added successfully");
             iceCreamMakerslist.add(new IceCreamMaker());
 
         } else if (split[1].equals("cartoonMilkMaker")) {
             if (currentPlayer.getMoney() >= 400)
                 currentPlayer.setMoney(currentPlayer.getMoney() - 400);
             else {
-                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
                 return;
             }
+            Messages.buildingAddedSuccessfullyMessage();
+            log.infoLog(currentPlayer.getUserName(),"building added successfully");
             cartoonMilkMakerslist.add(new CartoonMilkMaker());
 
         }
     }
 
+
+
+
+
     public void workingBuilding(String[] split) {
         // windMillslist.add(new WindMill());
-
+        int done =0;
         if (split[1].equals("windmill")) {
             if (windMillslist.size()==0) {
-                System.out.println("make the building first!");
-            return;
+
+
             }
             if (windMillslist.size()==1)
-            if (windMillslist.get(0).refullingLevel == 0)
-                windMillslist.get(0).refullingLevel = 4 + 1;
+            {done++;
+                if (windMillslist.get(0).refullingLevel == 0)
+                {
+                    done++;
+                    windMillslist.get(0).refullingLevel = 4 + 1;
+                }
+            }
 
         } else if (split[1].equals("fabricMaker")) {
             if (fabricMakerslist.size()==0){
-                System.out.println("make the building first!");
-            return;
+
             }
             if (fabricMakerslist.size()==1)
+            {done++;
                 if (fabricMakerslist.get(0).refullingLevel == 0)
-                fabricMakerslist.get(0).refullingLevel = 5 + 1;
+                {
+                    done++;
+                    fabricMakerslist.get(0).refullingLevel = 5 + 1;
+                }
+            }
 
         } else if (split[1].equals("bakery")) {
             if (bakeryslist.size()==0) {
-                System.out.println("make the building first!");
-                return;
+
             }
             if (bakeryslist.size()==1) {
-                System.out.println("1");
+                {done++;
                 if (bakeryslist.get(0).refullingLevel == 0){
+                    done++;
                     bakeryslist.get(0).refullingLevel = 5 + 1;
-                    System.out.println("2");
+
                 }
             }
-        } else if (split[1].equals("tailoring")) {
+        }} else if (split[1].equals("tailoring")) {
             if (tailoryslist.size()==0) {
-                System.out.println("make the building first!");
-                return;
+
+
             }
-            if (tailoryslist.size()==1)
+            if (tailoryslist.size()==1){
+                done++;
                 if (tailoryslist.get(0).refullingLevel == 0)
-                tailoryslist.get(0).refullingLevel = 6 + 1;
+                {
+                    done++;
+                    tailoryslist.get(0).refullingLevel = 6 + 1;
+                }
 
-        } else if (split[1].equals("iceCreamMaker")) {
+        } }
+        else if (split[1].equals("iceCreamMaker")) {
             if (iceCreamMakerslist.size()==0) {
-                System.out.println("make the building first!");
-                return;
+
+
             }
-            if (iceCreamMakerslist.size()==1)
-
+            if (iceCreamMakerslist.size()==1) {
+                done++;
                 if (iceCreamMakerslist.get(0).refullingLevel == 0)
-                iceCreamMakerslist.get(0).refullingLevel = 7 + 1;
-
+                {
+                    done++;
+                    iceCreamMakerslist.get(0).refullingLevel = 7 + 1;
+                }
+            }
         } else if (split[1].equals("cartoonMilkMaker")) {
             if (cartoonMilkMakerslist.size()==0) {
-                System.out.println("make the building first!");
-                return;
+
             }
-            if (cartoonMilkMakerslist.size()==1)
-
+            if (cartoonMilkMakerslist.size()==1) {
+                done++;
                 if (cartoonMilkMakerslist.get(0).refullingLevel == 0)
-                cartoonMilkMakerslist.get(0).refullingLevel = 6 + 1;
-
+                {
+                    done++;
+                    cartoonMilkMakerslist.get(0).refullingLevel = 6 + 1;
+                }
+            }
+        }
+        else {
+            Messages.invalidCommandMessage();
+            log.errorLog(currentPlayer.getUserName(),"invalid command");
+            return;
+        }
+        if(done==0) {
+            Messages.buildFirstMessage();
+            log.errorLog(currentPlayer.getUserName(),"work failed. building should be constructed first");
+        }
+        else if(done==1){
+            log.errorLog(currentPlayer.getUserName(),"building is already working");
+            Messages.buildingIsAlreadyWorkingMessage();
+        }
+        else {
+            log.infoLog(currentPlayer.getUserName(),"work started");
+            Messages.workStartedMessage();
         }
     }
+    private void workingTwoTimesFaster(String name){
+        boolean done=false;
+        if (name.equals("windmill")) {
+            if (windMillslist.get(0).refullingLevel == 0)
+            {done=true;
+                windMillslist.get(0).refullingLevel =(windMillslist.get(0).neededTime)/2  + 1;
+            }
 
+
+        }
+
+        else if (name.equals("fabricMaker")) {
+
+            if (fabricMakerslist.get(0).refullingLevel == 0)
+            {
+                done=true;
+                fabricMakerslist.get(0).refullingLevel =  (fabricMakerslist.get(0).neededTime)/2 + 1;
+            }
+
+        } else if (name.equals("bakery")) {
+            if (bakeryslist.get(0).refullingLevel == 0)
+            {
+                done=true;
+                bakeryslist.get(0).refullingLevel = (bakeryslist.get(0).neededTime)/2 + 1;
+            }
+
+
+
+        }
+        else if (name.equals("tailoring")) {
+
+
+            if (tailoryslist.get(0).refullingLevel == 0)
+            {
+                done=true;
+                tailoryslist.get(0).refullingLevel = (tailoryslist.get(0).neededTime)/2 + 1;
+            }
+
+
+        } else if (name.equals("iceCreamMaker")) {
+
+
+
+            if (iceCreamMakerslist.get(0).refullingLevel == 0)
+            {
+                done=true;
+                iceCreamMakerslist.get(0).refullingLevel = (iceCreamMakerslist.get(0).neededTime)/2 + 1;
+            }
+
+
+        } else if (name.equals("cartoonMilkMaker")) {
+
+
+
+            if (cartoonMilkMakerslist.get(0).refullingLevel == 0)
+            {
+                done=true;
+                cartoonMilkMakerslist.get(0).refullingLevel = (cartoonMilkMakerslist.get(0).neededTime)/2 + 1;
+            }
+
+
+        }
+        else {
+            Messages.invalidCommandMessage();
+            log.errorLog(currentPlayer.getUserName(),"invalid command");
+            return;
+        }
+        if(done){
+            Messages.WorkWithTwoTimesOfNormalSpeedMessage();
+            log.infoLog(currentPlayer.getUserName(),"building set to work two times faster");
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"building is already working");
+            Messages.buildingIsAlreadyWorkingMessage();
+        }
+
+    }
     public void pickUpProperty(String[] split) {
         int x = Integer.parseInt(split[2]);
         int y = Integer.parseInt(split[3]);
-
         int c = 0;
         int tem = 0;
+        boolean picked=false;
+
 
         for (Egg egg : eggslist) {
-            if (egg.xVal == x && egg.yVal == y&&onMapProduct.contains(egg)) {
+            System.out.println("hi");
+            if (egg.xVal == x && egg.yVal == y && onMapProduct.contains(egg)&&gainedProductFreeSpace()>=1) {
                 gaindproductslist.add(new Egg(egg.xVal, egg.yVal, "egg"));
+
+                c = eggslist.indexOf(egg);
+                onMapProduct.remove(egg);
+                picked=true;
 
                 tem = 1;
                 break;
             }
-            c++;
+
         }
         if (tem == 1)
             eggslist.remove(c);
 
 
-        int c2 = 0;
-        int tem2 = 0;
+
+
+        c = 0;
+        tem = 0;
         for (Flour flour : flourslist) {
-            if (flour.xVal == x && flour.yVal == y&&onMapProduct.contains(flour)) {
+            if (flour.xVal == x && flour.yVal == y&&onMapProduct.contains(flour)&&gainedProductFreeSpace()>=2) {
                 gaindproductslist.add(new Flour(flour.xVal, flour.yVal, "flour"));
-
-                tem2 = 1;
+                picked=true;
+                tem = 1;
+                onMapProduct.remove(flour);
+                c=flourslist.indexOf(flour);
                 break;
             }
-            c2++;
+
         }
-        if (tem2 == 1)
-            flourslist.remove(c2);
+        if (tem == 1)
+            flourslist.remove(c);
 
 
-        int c3 = 0;
-        int tem3 = 0;
+        c = 0;
+        tem = 0;
         for (Fabric fabric : fabriclist) {
-            if (fabric.xVal == x && fabric.yVal == y&&onMapProduct.contains(fabric)) {
+            if (fabric.xVal == x && fabric.yVal == y&&onMapProduct.contains(fabric)&&gainedProductFreeSpace()>=2) {
                 gaindproductslist.add(new Fabric(fabric.xVal, fabric.yVal, "fabric"));
-
-                tem3 = 1;
+                c=fabriclist.indexOf(fabric);
+                onMapProduct.remove(fabric);
+                tem = 1;
+                picked=true;
                 break;
             }
-            c3++;
+
         }
-        if (tem3 == 1)
-            fabriclist.remove(c3);
+        if (tem == 1)
+            fabriclist.remove(c);
 
 
-        int c4 = 0;
-        int tem4 = 0;
+
+        c = 0;
+        tem = 0;
         for (Feather feather : featherslist) {
-            if (feather.xVal == x && feather.yVal == y&&onMapProduct.contains(feather)) {
+            if (feather.xVal == x && feather.yVal == y&&onMapProduct.contains(feather)&&gainedProductFreeSpace()>=1) {
                 gaindproductslist.add(new Fabric(feather.xVal, feather.yVal, "feather"));
-
-                tem4 = 1;
+                c=featherslist.indexOf(feather);
+                onMapProduct.remove(feather);
+                picked=true;
+                tem = 1;
                 break;
             }
-            c4++;
+
         }
-        if (tem4 == 1)
-            featherslist.remove(c4);
+        if (tem == 1)
+            featherslist.remove(c);
 
 
-        int c5 = 0;
-        int tem5 = 0;
+        c = 0;
+        tem = 0;
         for (Milk milk : milkslist) {
-            if (milk.xVal == x && milk.yVal == y&&onMapProduct.contains(milk)) {
+            if (milk.xVal == x && milk.yVal == y&&onMapProduct.contains(milk)&&gainedProductFreeSpace()>=1) {
                 gaindproductslist.add(new Fabric(milk.xVal, milk.yVal, "milk"));
-
-                tem5 = 1;
+                c=milkslist.indexOf(milk);
+                onMapProduct.remove(milk);
+                tem = 1;
+                picked=true;
                 break;
             }
-            c5++;
+
         }
-        if (tem5 == 1)
-            milkslist.remove(c5);
+        if (tem == 1)
+            milkslist.remove(c);
 
 
-        int c6 = 0;
-        int tem6 = 0;
+        c = 0;
+        tem = 0;
         for (Bread bread : breadslist) {
-            if (bread.xVal == x && bread.yVal == y&&onMapProduct.contains(bread)) {
+            if (bread.xVal == x && bread.yVal == y&&onMapProduct.contains(bread)&&gainedProductFreeSpace()>=4) {
                 gaindproductslist.add(new Bread(bread.xVal, bread.yVal, "bread"));
-
-                tem6 = 1;
+                c=breadslist.indexOf(bread);
+                onMapProduct.remove(bread);
+                tem = 1;
+                picked=true;
                 break;
             }
-            c6++;
+
         }
-        if (tem6 == 1)
-            breadslist.remove(c6);
+        if (tem == 1)
+            breadslist.remove(c);
 
 
-        int c7 = 0;
-        int tem7 = 0;
+        c= 0;
+        tem= 0;
         for (BearProduct bearProduct : bearProductslist) {
-            if (bearProduct.xVal == x && bearProduct.yVal == y&&onMapProduct.contains(bearProduct)) {
+            if (bearProduct.xVal == x && bearProduct.yVal == y&&onMapProduct.contains(bearProduct)&&gainedProductFreeSpace()>=15) {
                 gaindproductslist.add(new BearProduct(bearProduct.xVal, bearProduct.yVal, "bearProduct"));
-
-                tem7 = 1;
+                c=bearProductslist.indexOf(bearProduct);
+                onMapProduct.remove(bearProduct);
+                tem = 1;
+                picked=true;
                 break;
             }
-            c7++;
+
         }
-        if (tem7 == 1)
-            bearProductslist.remove(c7);
+        if (tem == 1)
+            bearProductslist.remove(c);
 
 
-        int c8 = 0;
-        int tem8 = 0;
+        c = 0;
+        tem = 0;
         for (Clothe clothe : clotheslist) {
-            if (clothe.xVal == x && clothe.yVal == y&&onMapProduct.contains(clothe)) {
+            if (clothe.xVal == x && clothe.yVal == y&&onMapProduct.contains(clothe)&&gainedProductFreeSpace()>=4) {
                 gaindproductslist.add(new Clothe(clothe.xVal, clothe.yVal, "clothe"));
-
-                tem8 = 1;
+                c=clotheslist.indexOf(clothe);
+                onMapProduct.remove(clothe);
+                picked=true;
+                tem = 1;
                 break;
             }
-            c8++;
+
         }
-        if (tem8 == 1)
-            clotheslist.remove(c8);
+        if (tem == 1)
+            clotheslist.remove(c);
 
 
-        int c9 = 0;
-        int tem9 = 0;
+        c = 0;
+        tem = 0;
         for (IceCream iceCream : icecreamslist) {
-            if (iceCream.xVal == x && iceCream.yVal == y&&onMapProduct.contains(iceCream)) {
+            if (iceCream.xVal == x && iceCream.yVal == y&&onMapProduct.contains(iceCream)&&gainedProductFreeSpace()>=4) {
                 gaindproductslist.add(new IceCream(iceCream.xVal, iceCream.yVal, "iceCream"));
-
-                tem9 = 1;
+                c=icecreamslist.indexOf(iceCream);
+                onMapProduct.remove(iceCream);
+                picked=true;
+                tem = 1;
                 break;
             }
-            c9++;
+
         }
-        if (tem9 == 1)
-            icecreamslist.remove(c9);
-        System.out.println("gained products : ");
+        if (tem == 1)
+            icecreamslist.remove(c);
 
 
-        int c10 = 0;
-        int tem10 = 0;
+
+        c = 0;
+        tem= 0;
         for (LionProduct lionProduct : lionProductslist) {
-            if (lionProduct.xVal == x && lionProduct.yVal == y&&onMapProduct.contains(lionProduct)) {
+            if (lionProduct.xVal == x && lionProduct.yVal == y&&onMapProduct.contains(lionProduct)&&gainedProductFreeSpace()>=15) {
                 gaindproductslist.add(new LionProduct(lionProduct.xVal, lionProduct.yVal, "lionproduct"));
-
-                tem10 = 1;
+                c=lionProductslist.indexOf(lionProduct);
+                onMapProduct.remove(lionProduct);
+                picked=true;
+                tem = 1;
                 break;
             }
-            c10++;
-        }
-        if (tem10 == 1)
-            lionProductslist.remove(c10);
 
-        int c11 = 0;
-        int tem11 = 0;
+        }
+        if (tem == 1)
+            lionProductslist.remove(c);
+
+        c = 0;
+        tem = 0;
         for (TigerProduct tigerProduct : tigerProductslist) {
-            if (tigerProduct.xVal == x && tigerProduct.yVal == y&&onMapProduct.contains(tigerProduct)) {
+            if (tigerProduct.xVal == x && tigerProduct.yVal == y&&onMapProduct.contains(tigerProduct)&&gainedProductFreeSpace()>=15) {
                 gaindproductslist.add(new LionProduct(tigerProduct.xVal, tigerProduct.yVal, "tigerproduct"));
-
-                tem11 = 1;
+                onMapProduct.remove(tigerProduct);
+                c=tigerProductslist.indexOf(tigerProduct);
+                picked=true;
+                tem = 1;
                 break;
             }
-            c11++;
+
         }
-        if (tem11 == 1)
-            tigerProductslist.remove(c11);
-        removingItemsOnTheSpot(x,y);
-        System.out.println("gained products : ");
-        for (Product product : gaindproductslist) {
-            System.out.println(product.xVal + " " + product.yVal + "  " + product.getName());
+        if (tem == 1)
+            tigerProductslist.remove(c);
+        if(picked) {
+            Messages.itemPickedMessage();
+            log.infoLog(currentPlayer.getUserName(),"some items were picked");
         }
+        else {
+            Messages.noItemPickedMessage();
+            log.errorLog(currentPlayer.getUserName(),"no item was picked");
+        }
+
+        showGaindProducts();
+
 
 
 
     }
+    public void buyAnimal(String[] split) {
 
-    public void turnTime(String[] split) {
+        if (split[1].equals("dog")) {
+            if (currentPlayer.getMoney() < 100) {
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
+                return;
+            } else {
+                log.infoLog(currentPlayer.getUserName(),"dog added successfully");
+                Messages.animalBuyingSuccessfulMessage();
+                defenderAnimalslist.add(new Dog("dog"));
+                currentPlayer.setMoney(currentPlayer.getMoney()-100);
+            }
+        }
+        else if (split[1].equals("cat")){
+            if (currentPlayer.getMoney() < 150) {
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
+                System.out.println("not enough money");
+                return;
+            } else {
+                log.infoLog(currentPlayer.getUserName(),"cat added successfully");
+                Messages.animalBuyingSuccessfulMessage();
+                defenderAnimalslist.add(new Cat("cat"));
+                currentPlayer.setMoney(currentPlayer.getMoney()-150);
+            }
+        }
+
+
+        DomesticAnimal d;
+
+        if (split[1].equalsIgnoreCase("chicken")||split[1].equalsIgnoreCase("turkey")||split[1].equalsIgnoreCase("buffalo")){
+            {
+                domesticAnimalsList.add(d = new DomesticAnimal(split[1]));
+
+            }
+
+            if (currentPlayer.getMoney() < d.getPrice()) {
+                System.out.println("not enough money");
+                Messages.notEnoughMoneyMessage();
+                log.errorLog(currentPlayer.getUserName(),"buy failed due to lack of money");
+                domesticAnimalsList.remove(d);
+                return;
+            }
+            log.infoLog(currentPlayer.getUserName(),split[1]+"  added successfully");
+            Messages.animalBuyingSuccessfulMessage();
+            currentPlayer.setMoney(currentPlayer.getMoney() - d.getPrice());
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"buying failed.This item does not exist");
+            Messages.thisItemDoesNotExistMessage();
+        }
+
+
+
+
+
+    }
+    public void plant(String[] split) {
+        if (waterTank.getLevelOfWater() < 1) {
+            Messages.noWaterMessage();
+            log.errorLog(currentPlayer.getUserName(),"planting failed.Tank is empty");
+
+        } else {
+            Messages.plantSuccessfulMessage();
+            log.infoLog(currentPlayer.getUserName(),"plant successful");
+            waterTank.setLevelOfWater(waterTank.getLevelOfWater() - 1);
+            int xval = Integer.parseInt(split[1]);
+            int yval = Integer.parseInt(split[2]);
+            grassMap[xval - 1][yval - 1] +=1;
+            /*for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 6; j++) {
+                    System.out.print(map[i][j]);
+                }
+                System.out.println();
+            }*/
+        }
+    }
+    public void loadingTruck(String[] split) {
+        int index=-1;
+        for (Product product : gaindproductslist) {
+            if (product.name.equals(split[2])) {
+                //truck.productListTrans.add(product);
+                //gaindproductslist.remove(product);
+                index=gaindproductslist.indexOf(product);
+                break;
+            }
+        }
+        if(index!=-1) {
+            if (truckEmptySpace() > gaindproductslist.get(index).size) {
+                truck.productListTrans.add(gaindproductslist.get(index));
+                gaindproductslist.remove(index);
+            }
+            else {
+                log.errorLog(currentPlayer.getUserName(),"truck loading failed.Truck is full");
+                Messages.truckIsFullMessage();
+            }
+        }
+
+        else {
+            log.errorLog(currentPlayer.getUserName(),"load failed .This Item Does Not Exist");
+            Messages.thisItemDoesNotExistMessage();
+        }
+
+
+
+
+
+    }
+    private void showGaindProducts(){
+        System.out.println("gaind product");
+        log.infoLog(currentPlayer.getUserName(),"Products on the storage were displayed");
+        for (Product product : gaindproductslist) {
+            System.out.println(product.xVal +"  "+ product.yVal+"  "+ product.getName());
+        }
+    }
+    public void wellWater() {
+        //waterTank.setLevelOfWater(5);
+        if (waterTank.getLevelOfWater() != 0)
+        {
+            log.errorLog(currentPlayer.getUserName(),"well failed.There is still water in tank");
+            Messages.thereIsStillWaterMessage();
+        }
+        else
+        {
+            log.infoLog(currentPlayer.getUserName(),"well successful");
+            waterTank.setLevelOfRefulling(4);
+        }
+    }
+    public void unloadTruck(String split[]){
+        int index=-1;
+        for (Product productTran : truck.productListTrans) {
+            if(productTran.name.equalsIgnoreCase(split[2])) {
+                index=truck.productListTrans.indexOf(productTran);
+                gaindproductslist.add(productTran);
+                break;
+
+            }
+        }
+        if (index!=-1) {truck.productListTrans.remove(index);
+            Messages.truckUnloadedSuccessfullyMessage(split[2]);
+            log.infoLog(currentPlayer.getUserName(),"Truck unloaded successfully");
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"unload failed.This item does not exist");
+            Messages.thisItemDoesNotExistMessage();
+        }
+    }
+    private void workingAndMakingTwoProduct(String name){
+        if(name.equalsIgnoreCase("icecreammaker")) {
+            log.infoLog(currentPlayer.getUserName(),"create two product instead of one");
+            Messages.createTwoProductMessage();
+            iceCreamMakerslist.get(0).twoProduct=true;
+        }
+        else if(name.equalsIgnoreCase("cartoonmilkmaker")){
+            log.infoLog(currentPlayer.getUserName(),"create two product instead of one");
+            Messages.createTwoProductMessage();
+            cartoonMilkMakerslist.get(0).twoProduct=true;
+        }
+        else if(name.equalsIgnoreCase("tailoring")){
+            log.infoLog(currentPlayer.getUserName(),"create two product instead of one");
+            Messages.createTwoProductMessage();
+            tailoryslist.get(0).twoProduct=true;
+        }
+        else if(name.equalsIgnoreCase("windmill")){
+            log.infoLog(currentPlayer.getUserName(),"create two product instead of one");
+            Messages.createTwoProductMessage();
+            windMillslist.get(0).twoProduct=true;
+        }
+        else if(name.equalsIgnoreCase("bakery")){
+            log.infoLog(currentPlayer.getUserName(),"create two product instead of one");
+            Messages.createTwoProductMessage();
+            bakeryslist.get(0).twoProduct=true;
+        }
+        else if(name.equalsIgnoreCase("fabricmaker")){
+            log.infoLog(currentPlayer.getUserName(),"create two product instead of one");
+            Messages.createTwoProductMessage();
+            fabricMakerslist.get(0).twoProduct=true;
+        }
+        else{
+            log.errorLog(currentPlayer.getUserName(),"invalid command");
+            Messages.invalidCommandMessage();
+        }
+    }
+
+
+
+
+
+
+
+
+
+    public void updateEveryThing() {
+        try {
+            String info = "";
+            FileReader fileReader2 = new FileReader("users.txt");
+            BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
+            while (((info = bufferedReader2.readLine())) != null) {
+                System.out.println(info.split("\\s")[2]);
+                playersList.add(new Player(info.split("\\s")[0], info.split("\\s")[1], Integer.parseInt(info.split("\\s")[2])));
+            }
+            bufferedReader2.close();
+            for (Player player : playersList) {
+                System.out.println(player.getUserName() + "  " + player.getPassWord() + " " + player.getLevel());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private int truckEmptySpace(){
+        int volume=0;
+        for (Product productListTran : truck.productListTrans) {
+            volume+=productListTran.size;
+        }
+        return (30-volume);
+    }
+    public int gainedProductFreeSpace(){
+        int size=0;
+        for (Product product : gaindproductslist) {
+            size+=product.size;
+        }
+
+        return (30-size);
+    }
+    public Manager() {
+        this.log=new Log();
+    }
+    private boolean isItUpdated(String name){
+        if(name.equalsIgnoreCase("icecreammaker")){
+            if(iceCreamMakerslist.size()==1){
+                if(iceCreamMakerslist.get(0).updated) {
+                   return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        if(name.equalsIgnoreCase("cartoonmilkmaker")){
+            if(cartoonMilkMakerslist.size()==1){
+                if(cartoonMilkMakerslist.get(0).updated) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        if(name.equalsIgnoreCase("tailoring")){
+            if(tailoryslist.size()==1){
+                if(!tailoryslist.get(0).updated) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        if(name.equalsIgnoreCase("windmill")){
+            if(windMillslist.size()==1){
+                if(windMillslist.get(0).updated) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        if(name.equalsIgnoreCase("bakery")){
+            if(bakeryslist.size()==1){
+                if(bakeryslist.get(0).updated) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        if(name.equalsIgnoreCase("fabricmaker")){
+            if(fabricMakerslist.size()==1){
+                if(fabricMakerslist.get(0).updated) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+    public void workingBuildingWithUpdate(String split[]){
+        if(split[2].equalsIgnoreCase("1")&&isItUpdated(split[1])) workingTwoTimesFaster(split[1]);
+        else if (split[2].equalsIgnoreCase("2")&&isItUpdated(split[1])) workingAndMakingTwoProduct(split[1]);
+        else {Messages.invalidCommandMessage();
+            log.errorLog(currentPlayer.getUserName(),"invalid input");
+        }
+}
+    public void turnTimes(String split[]){
+        int n=Integer.parseInt(split[1]);
+    for (int i = 0; i <n ; i++) {
+        turnTime();
+    }
+}
+    private void turnTime() {
 
         //finishing
         productTimePass();
         removingDecayedItems();
+        catsMoveWisely();
+        domesticsMoveWisely();
         catsCollecting();
+        wildsCageLevelDecrease();
         showGaindProducts();
         int chickencount = 0;
         int turkeycount = 0;
@@ -499,7 +948,9 @@ public class Manager {
         currentTurn++;
         cageLevel = 0;
         putBear();
-        movingBears();
+        movingWildAndDog();
+        destroyingfunction();
+        justTigersMove();
         destroyingfunction();
         int sell = 0;
 
@@ -518,14 +969,21 @@ public class Manager {
             System.out.println("money now" + currentPlayer.getMoney());
             sell = 0;
         }
-if (fabricMakerslist.size()==1) {
+        if (fabricMakerslist.size()==1) {
     System.out.println("fabric maker refulling   :   " + fabricMakerslist.get(0).refullingLevel);
     if (fabricMakerslist.get(0).refullingLevel > 1) {
         fabricMakerslist.get(0).refullingLevel--;
     } else if (fabricMakerslist.get(0).refullingLevel == 1) {
         //making product
-        fabriclist.add(new Fabric(5, 0, "fabric"));
-        onMapProduct.add(new Fabric(5, 0, "fabric"));
+        Fabric temp=new Fabric(5, 0, "fabric");
+        fabriclist.add(temp);
+        onMapProduct.add(temp);
+        if(fabricMakerslist.get(0).twoProduct){
+            Fabric veryTemp=new Fabric(5, 0, "fabric");
+            fabriclist.add(veryTemp);
+            onMapProduct.add(veryTemp);
+            fabricMakerslist.get(0).twoProduct=false;
+        }
         fabricMakerslist.get(0).refullingLevel = 0;
     }
 }
@@ -535,8 +993,15 @@ if (fabricMakerslist.size()==1) {
                 bakeryslist.get(0).refullingLevel--;
             } else if (bakeryslist.get(0).refullingLevel == 1) {
                 //making product
-                breadslist.add(new Bread(4, 0, "bread"));
-                onMapProduct.add((new Bread(4, 0, "bread")));
+                Bread temp=new Bread(4, 0, "bread");
+                breadslist.add(temp);
+                onMapProduct.add(temp);
+                if(bakeryslist.get(0).twoProduct){
+                    Bread veryTemp=new Bread(4, 0, "bread");
+                    breadslist.add(veryTemp);
+                    onMapProduct.add(veryTemp);
+                    bakeryslist.get(0).twoProduct=false;
+                }
                 bakeryslist.get(0).refullingLevel = 0;
             }
         }
@@ -546,20 +1011,36 @@ if (fabricMakerslist.size()==1) {
                 tailoryslist.get(0).refullingLevel--;
             } else if (tailoryslist.get(0).refullingLevel == 1) {
                 //making product
-                clotheslist.add(new Clothe(3, 5, "clothe"));
-                onMapProduct.add(new Clothe(3, 5, "clothe"));
+                Clothe temp1=new Clothe(3, 5, "clothe");
+                clotheslist.add(temp1);
+                onMapProduct.add(temp1);
+                if(tailoryslist.get(0).twoProduct){
+                    Clothe veryTemp1=new Clothe(3, 5, "clothe");
+                    clotheslist.add(veryTemp1);
+                    onMapProduct.add(veryTemp1);
+                    tailoryslist.get(0).twoProduct=false;
+
+                }
                 tailoryslist.get(0).refullingLevel = 0;
             }
         }
+
         if (iceCreamMakerslist.size()==1) {
             System.out.println("icecream refulling   :   " + iceCreamMakerslist.get(0).refullingLevel);
             if (iceCreamMakerslist.get(0).refullingLevel > 1) {
                 iceCreamMakerslist.get(0).refullingLevel--;
             } else if (iceCreamMakerslist.get(0).refullingLevel == 1) {
                 //making product
-                icecreamslist.add(new IceCream(3, 0, "iceCream"));
-                onMapProduct.add(new IceCream(3, 0, "iceCream"));
+                IceCream temp3=new IceCream(3, 0, "iceCream");
+                icecreamslist.add(temp3);
+                onMapProduct.add(temp3);
+            if(iceCreamMakerslist.get(0).twoProduct){
+                IceCream veryTemp3=new IceCream(3, 0, "iceCream");
+                icecreamslist.add(veryTemp3);
+                onMapProduct.add(veryTemp3);
 
+                iceCreamMakerslist.get(0).twoProduct=false;
+            }
                 iceCreamMakerslist.get(0).refullingLevel = 0;
             }
         }
@@ -569,8 +1050,15 @@ if (fabricMakerslist.size()==1) {
                 cartoonMilkMakerslist.get(0).refullingLevel--;
             } else if (cartoonMilkMakerslist.get(0).refullingLevel == 1) {
                 //making product
-                milkslist.add(new Milk(4, 5, "milk"));
-                onMapProduct.add(new Milk(4, 5, "milk"));
+                Milk temp4=new Milk(4, 5, "milk");
+                milkslist.add(temp4);
+                onMapProduct.add(temp4);
+                if(cartoonMilkMakerslist.get(0).twoProduct){
+                    Milk veryTemp4=new Milk(4, 5, "milk");
+                    milkslist.add(veryTemp4);// TODO: 6/16/2021
+                    onMapProduct.add(veryTemp4);
+                    cartoonMilkMakerslist.get(0).twoProduct=false;
+                }
                 cartoonMilkMakerslist.get(0).refullingLevel = 0;
             }
         }
@@ -580,8 +1068,16 @@ if (fabricMakerslist.size()==1) {
             windMillslist.get(0).refullingLevel--;
         } else if (windMillslist.get(0).refullingLevel == 1) {
             //making product
-            flourslist.add(new Flour(5, 5, "flour"));
-            onMapProduct.add(new Flour(5, 5, "flour"));
+            Flour temp5=new Flour(5, 5, "flour");
+            flourslist.add(temp5);
+            onMapProduct.add(temp5);
+            if(windMillslist.get(0).twoProduct){
+                Flour veryTemp5=new Flour(5, 5, "flour");
+                flourslist.add(veryTemp5);
+                onMapProduct.add(veryTemp5);
+                windMillslist.get(0).twoProduct=false;
+
+            }
             windMillslist.get(0).refullingLevel = 0;
         }
         }
@@ -632,7 +1128,7 @@ if (fabricMakerslist.size()==1) {
             System.out.println(tem);
 
 
-            switch (tem) {
+            /*switch (tem) {
                 case 0:
                     if (domesticAnimal.xVal < 5)
                         domesticAnimal.xVal += 1;
@@ -651,7 +1147,7 @@ if (fabricMakerslist.size()==1) {
                     else domesticAnimal.yVal += 1;
                 default:
                     break;
-            }
+            }*/
 
 
         }
@@ -701,6 +1197,7 @@ if (fabricMakerslist.size()==1) {
         }
 
 //losing product
+/*
         tem2=0;
         while (tem2 == 0) {
             tem2 = 1;
@@ -753,6 +1250,7 @@ if (fabricMakerslist.size()==1) {
                 milkslist.remove(count2);
             // System.out.println("here");
         }
+*/
 
 
 
@@ -761,254 +1259,11 @@ if (fabricMakerslist.size()==1) {
 
 
     }
-
-    private void destroyingfunction() {
-
-
-        int tem2 = 0;
-        while (tem2 == 0) {
-            tem2 = 1;
-            int count2 = 0;
-            for (DomesticAnimal animal : domesticAnimalsList) {
-                for (Bear bear : bearslist) {
-                    System.out.println("beer");
-                    if (animal.xVal == bear.xVal && animal.yVal == bear.yVal) {
-                        bearslist.remove(bear);
-                        tem2 = 0;
-                        break;
-
-                    }
-
-                }
-                if (tem2 == 0) break;
-                //    System.out.println("duuuuude");
-                count2++;
-            }
-
-            if (tem2 == 0)
-                domesticAnimalsList.remove(count2);
-
-
-            int tem3 = 0;
-            while (tem3 == 0) {
-                tem3 = 1;
-                int count3 = 0;
-                for (DomesticAnimal animal : domesticAnimalsList) {
-                    for (Lion lion : lionslist) {
-                        if (animal.xVal == lion.xVal && animal.yVal == lion.yVal) {
-                            lionslist.remove(lion);
-                            tem3 = 0;
-                            break;
-
-                        }
-
-                    }
-                    if (tem3 == 0) break;
-                    //    System.out.println("duuuuude");
-                    count3++;
-                }
-
-                if (tem3 == 0)
-                    domesticAnimalsList.remove(count3);
-
-
-            }
-            for (DomesticAnimal domesticAnimal : domesticAnimalsList) {
-                System.out.println("animals: " + domesticAnimal.getxVal() + " " + domesticAnimal.getyVal());
-            }
-        }
-
-        int tem4 = 0;
-        while (tem4 == 0) {
-            tem4 = 1;
-            int count4 = 0;
-            for (Bear bear : bearslist) {
-                for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
-                    if (defenderAnimal.xVal == bear.xVal && defenderAnimal.yVal == bear.yVal) {
-                        //defenderAnimalslist.remove(defenderAnimal);
-                        System.out.println("dog died******************");
-                        tem4 = 0;
-                        break;
-
-                    }
-
-                }
-                if (tem4 == 0) break;
-                count4++;
-            }
-
-            if (tem4 == 0) {
-                bearslist.remove(count4);
-                System.out.println("bear died***************");
-            }
-        }
-
-
-
-        int tem5 = 0;
-        while (tem5 == 0) {
-            tem5 = 1;
-            int count5 = 0;
-            for (Lion lion : lionslist) {
-                for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
-                    if (defenderAnimal.xVal == lion.xVal && defenderAnimal.yVal == lion.yVal) {
-                        //defenderAnimalslist.remove(defenderAnimal);
-                        System.out.println("dog died******************");
-                        tem4 = 0;
-                        break;
-
-                    }
-
-                }
-                if (tem5 == 0) break;
-                count5++;
-            }
-
-            if (tem5 == 0) {
-                lionslist.remove(count5);
-                System.out.println("lion died***************");
-            }
-        }
-
-
-    }
-
-    private void movingBears() {
-
-        for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
-            int tem = random.nextInt(4);
-            System.out.println(tem);
-
-
-            switch (tem) {
-                case 0:
-                    if (defenderAnimal.xVal < 5)
-                        defenderAnimal.xVal += 1;
-                    else defenderAnimal.xVal -= 1;
-                case 1:
-                    if (defenderAnimal.xVal > 0)
-                        defenderAnimal.xVal -= 1;
-                    else defenderAnimal.xVal += 1;
-                case 2:
-                    if (defenderAnimal.yVal < 5)
-                        defenderAnimal.yVal += 1;
-                    else defenderAnimal.yVal -= 1;
-                case 3:
-                    if (defenderAnimal.yVal > 0)
-                        defenderAnimal.yVal -= 1;
-                    else defenderAnimal.yVal += 1;
-                default:
-                    break;
-            }
-        }
-
-
-        for (Bear bear : bearslist) {
-            int tem = random.nextInt(4);
-            System.out.println(tem);
-
-
-            switch (tem) {
-                case 0:
-                    if (bear.xVal < 5)
-                        bear.xVal += 1;
-                    else bear.xVal -= 1;
-                case 1:
-                    if (bear.xVal > 0)
-                        bear.xVal -= 1;
-                    else bear.xVal += 1;
-                case 2:
-                    if (bear.yVal < 5)
-                        bear.yVal += 1;
-                    else bear.yVal -= 1;
-                case 3:
-                    if (bear.yVal > 0)
-                        bear.yVal -= 1;
-                    else bear.yVal += 1;
-                default:
-                    break;
-            }
-        }
-
-
-        for (Lion lion : lionslist) {
-            int tem = random.nextInt(4);
-            System.out.println(tem);
-
-
-            switch (tem) {
-                case 0:
-                    if (lion.xVal < 5)
-                        lion.xVal += 1;
-                    else lion.xVal -= 1;
-                case 1:
-                    if (lion.xVal > 0)
-                        lion.xVal -= 1;
-                    else lion.xVal += 1;
-                case 2:
-                    if (lion.yVal < 5)
-                        lion.yVal += 1;
-                    else lion.yVal -= 1;
-                case 3:
-                    if (lion.yVal > 0)
-                        lion.yVal -= 1;
-                    else lion.yVal += 1;
-                default:
-                    break;
-            }
-        }
-        for (Tiger tiger : tigerslist) {
-
-            {
-                int tem = random.nextInt(4);
-                System.out.println(tem);
-
-
-                switch (tem) {
-                    case 0:
-                        if (tiger.xVal < 5)
-                            tiger.xVal += 1;
-                        else tiger.xVal -= 1;
-                    case 1:
-                        if (tiger.xVal > 0)
-                            tiger.xVal -= 1;
-                        else tiger.xVal += 1;
-                    case 2:
-                        if (tiger.yVal < 5)
-                            tiger.yVal += 1;
-                        else tiger.yVal -= 1;
-                    case 3:
-                        if (tiger.yVal > 0)
-                            tiger.yVal -= 1;
-                        else tiger.yVal += 1;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
-
-    private void putBear() {
-        for (Integer integer : bearArrivalTime) {
-            if (integer == currentTurn)
-                bearslist.add(new Bear("bear"));
-        }
-
-        for (Integer integer : lionArrivalTime) {
-            if (integer == currentTurn)
-                lionslist.add(new Lion("lion"));
-        }
-        for (Integer integer : tigerArrivalTime) {
-            if (integer == currentTurn)
-                lionslist.add(new Lion("lion"));
-        }
-    }
-
     private void animalsEatingPlant() {
         for (DomesticAnimal domesticAnimal : domesticAnimalsList) {
             if (domesticAnimal.getHealth() < 50) {
-                if (map[domesticAnimal.xVal][domesticAnimal.yVal].equals("p")) {
-                    map[domesticAnimal.xVal][domesticAnimal.yVal] = "0";
+                if (grassMap[domesticAnimal.xVal][domesticAnimal.yVal]>=1) {
+                    grassMap[domesticAnimal.xVal][domesticAnimal.yVal] -= 1;
                     domesticAnimal.setHealth(100);
                 }
 
@@ -1016,27 +1271,148 @@ if (fabricMakerslist.size()==1) {
 
         }
     }
-
-    private void animalMakingProduct(DomesticAnimal domesticAnimal) {
-        if (domesticAnimal.getName().equals("chicken")) {
-            eggslist.add(new Egg(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "egg"));
-            onMapProduct.add(new Egg(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "egg"));
+    public void updateBuilding(String split[]){
+if(split[1].equalsIgnoreCase("icecreammaker")){
+    if(iceCreamMakerslist.size()==1){
+        if(!iceCreamMakerslist.get(0).updated) {
+            iceCreamMakerslist.get(0).updated=true;
+            Messages.updateSuccessfulMessage();
+            log.infoLog(currentPlayer.getUserName(),"building updated");
         }
-        else if (domesticAnimal.getName().equals("turkey")) {
-            featherslist.add(new Feather(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "feather"));
-            onMapProduct.add(new Egg(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "feather"));
+        else {Messages.alreadyUpdatedMessage();
+        log.errorLog(currentPlayer.getUserName(),"update failed . Building is already updated");
         }
-            else if (domesticAnimal.getName().equals("buffalo")) {
-            milkslist.add(new Milk(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "milk"));
-            onMapProduct.add(new Egg(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "milk"));
-            }
     }
-
+    else {
+        log.errorLog(currentPlayer.getUserName(),"update failed . Building does not exist");
+        Messages.buildFirstMessage();
+    }
+}
+    if(split[1].equalsIgnoreCase("cartoonmilkmaker")){
+        if(cartoonMilkMakerslist.size()==1){
+            if(!cartoonMilkMakerslist.get(0).updated) {
+                cartoonMilkMakerslist.get(0).updated=true;
+                Messages.updateSuccessfulMessage();
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+            }
+            else {
+                log.errorLog(currentPlayer.getUserName(),"update failed . Building is already updated");
+                Messages.alreadyUpdatedMessage();
+            }
+        }
+        else{
+            log.errorLog(currentPlayer.getUserName(),"update failed . Building does not exist");
+            Messages.buildFirstMessage();
+        }
+    }
+    if(split[1].equalsIgnoreCase("tailoring")){
+        if(tailoryslist.size()==1){
+            if(!tailoryslist.get(0).updated) {
+                tailoryslist.get(0).updated=true;
+                Messages.updateSuccessfulMessage();
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+            }
+            else {
+                log.errorLog(currentPlayer.getUserName(),"update failed . Building is already updated");
+                Messages.alreadyUpdatedMessage();
+            }
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"update failed . Building does not exist");
+            Messages.buildFirstMessage();
+        }
+    }
+    if(split[1].equalsIgnoreCase("windmill")){
+        if(windMillslist.size()==1){
+            if(!windMillslist.get(0).updated) {
+                windMillslist.get(0).updated=true;
+                Messages.updateSuccessfulMessage();
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+            }
+            else {
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+                Messages.alreadyUpdatedMessage();
+            }
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"update failed . Building does not exist");
+            Messages.buildFirstMessage();
+        }
+    }
+    if(split[1].equalsIgnoreCase("bakery")){
+        if(bakeryslist.size()==1){
+            if(!bakeryslist.get(0).updated) {
+                bakeryslist.get(0).updated=true;
+                Messages.updateSuccessfulMessage();
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+            }
+            else {
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+                Messages.alreadyUpdatedMessage();
+            }
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"update failed . Building does not exist");
+            Messages.buildFirstMessage();
+        }
+    }
+    if(split[1].equalsIgnoreCase("fabricmaker")){
+        if(fabricMakerslist.size()==1){
+            if(!fabricMakerslist.get(0).updated) {
+                fabricMakerslist.get(0).updated=true;
+                Messages.updateSuccessfulMessage();
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+            }
+            else {
+                log.infoLog(currentPlayer.getUserName(),"building updated");
+                Messages.alreadyUpdatedMessage();
+            }
+        }
+        else {
+            log.errorLog(currentPlayer.getUserName(),"update failed . Building does not exist");
+            Messages.buildFirstMessage();
+        }
+    }
+}
+    public void wildsCageLevelDecrease(){
+        for (WildAnimal wildAnimal : wildAnimalsList) {
+            if(wildAnimal.lastCagedTurn<currentTurn){
+    if((wildAnimal instanceof Tiger &&wildAnimal.health<3)||(wildAnimal instanceof Lion &&wildAnimal.health<3)||(wildAnimal instanceof Bear &&wildAnimal.health<4)){
+            wildAnimal.health+=1;
+            wildAnimal.lastCagedTurn=currentTurn;}
+            }
+        }
+    }
     public void putCage(String[] split) {
         int xval = Integer.parseInt(split[1]);
         int yval = Integer.parseInt(split[2]);
-        map[xval][yval] = "cage";
-        for (Bear bear : bearslist) {
+        int index=-1;
+       // map[xval][yval] = "cage";
+        for (WildAnimal wildAnimal : wildAnimalsList) {
+            if(wildAnimal.xVal==xval&&wildAnimal.yVal==yval){
+                if(wildAnimal.health==1)  index=wildAnimalsList.indexOf(wildAnimal);
+                else {wildAnimal.health-=1;
+                wildAnimal.lastCagedTurn=currentTurn;
+                }
+                break;
+            }
+        }
+        if(index!=-1){
+            if(wildAnimalsList.get(index).getName().equalsIgnoreCase("tiger")) {
+                onMapProduct.add(maketigerProduct((Tiger)wildAnimalsList.get(index)));
+                tigerslist.remove(wildAnimalsList.get(index));}
+            else if(wildAnimalsList.get(index).getName().equalsIgnoreCase("lion")) {
+                onMapProduct.add(makelionProduct((Lion) wildAnimalsList.get(index)));
+                lionslist.remove(wildAnimalsList.get(index));
+            }
+            else {
+                onMapProduct.add(makebearProduct((Bear) wildAnimalsList.get(index)));
+                bearslist.remove(wildAnimalsList.get(index));
+            }
+
+            wildAnimalsList.remove(index);
+        }
+       /* for (Bear bear : bearslist) {
             if (bear.getxVal() == xval && bear.getyVal() == yval)
                 if (cageLevel == 0) {
                     if (bear.health == 1) {
@@ -1077,144 +1453,281 @@ if (fabricMakerslist.size()==1) {
                     }
                 }
         }
+*/
+    }
+    private void destroyDomesticAnimals(){
+        ArrayList<Integer> indexes=new ArrayList();
+        for (DomesticAnimal domesticAnimal : domesticAnimalsList) {
+            for (WildAnimal wildAnimal : wildAnimalsList) {
+                if(domesticAnimal.xVal==wildAnimal.xVal&&domesticAnimal.yVal==wildAnimal.yVal){
+                    indexes.add(domesticAnimalsList.indexOf(domesticAnimal));
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i <indexes.size() ; i++) {
+            domesticAnimalsList.remove(indexes.get(i));
+        }
+    }
+    private void dogVsWilds(){
+        ArrayList<Integer> indexOfDogs=new ArrayList<>();
+        int indexOfWild;
+        for (int i = 0; i <defenderAnimalslist.size() ; i++) {
+            indexOfWild=-1;
+            if(defenderAnimalslist.get(i) instanceof Dog){
+                for (WildAnimal wildAnimal : wildAnimalsList) {
+                    if(wildAnimal.xVal==defenderAnimalslist.get(i).xVal&&wildAnimal.yVal==defenderAnimalslist.get(i).yVal){
+                        indexOfWild=wildAnimalsList.indexOf(wildAnimal);
+                        indexOfDogs.add(i);
+                        break;
+
+                    }
+                }
+                if(indexOfWild!=-1){
+                    if(wildAnimalsList.get(i).getName().equalsIgnoreCase("tiger")) tigerslist.remove(wildAnimalsList.get(i));
+                    else if(wildAnimalsList.get(i).getName().equalsIgnoreCase("lion")) lionslist.remove(wildAnimalsList.get(i));
+                    else bearslist.remove(wildAnimalsList.get(i));
+
+                    wildAnimalsList.remove(indexOfWild);
+                }
+
+
+            }
+        }
+        for (int i = 0; i <indexOfDogs.size() ; i++) {
+            domesticAnimalsList.remove(indexOfDogs.get(i));
+
+        }
 
     }
-    private void showGaindProducts(){
-        System.out.println("gaind product");
-        for (Product product : gaindproductslist) {
-            System.out.println(product.xVal +"  "+ product.yVal+"  "+ product.getName());
+    private void destroyingfunction() {
+        destroyDomesticAnimals();
+        dogVsWilds();
+       /* int tem = 0;
+        while (tem == 0) {
+            tem = 1;
+            int count = 0;
+            for (DomesticAnimal animal : domesticAnimalsList) {
+
+                for (Bear bear : bearslist) {
+                    System.out.println("beer");
+                    if (animal.xVal == bear.xVal && animal.yVal == bear.yVal) {
+                        bearslist.remove(bear);
+                        tem = 0;
+                        break;
+
+                    }
+
+                }
+                if (tem == 0) break;
+                //    System.out.println("duuuuude");
+                count++;
+            }
+
+            if (tem == 0)
+                domesticAnimalsList.remove(count);
+
+
+            int tem3 = 0;
+            while (tem3 == 0) {
+                tem3 = 1;
+                int count3 = 0;
+                for (DomesticAnimal animal : domesticAnimalsList) {
+                    for (Lion lion : lionslist) {
+                        if (animal.xVal == lion.xVal && animal.yVal == lion.yVal) {
+                            lionslist.remove(lion);
+                            tem3 = 0;
+                            break;
+
+                        }
+
+                    }
+                    if (tem3 == 0) break;
+                    //    System.out.println("duuuuude");
+                    count3++;
+                }
+
+                if (tem3 == 0)
+                    domesticAnimalsList.remove(count3);
+
+
+            }
+            for (DomesticAnimal domesticAnimal : domesticAnimalsList) {
+                System.out.println("animals: " + domesticAnimal.getxVal() + " " + domesticAnimal.getyVal());
+            }
+        }
+        int tem4 = 0;
+        while (tem4 == 0) {
+            tem4 = 1;
+            int count4 = 0;
+            for (Bear bear : bearslist) {
+                for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+                    if (defenderAnimal.xVal == bear.xVal && defenderAnimal.yVal == bear.yVal) {
+                        //defenderAnimalslist.remove(defenderAnimal);
+                        System.out.println("dog died******************");
+                        tem4 = 0;
+                        break;
+
+                    }
+
+                }
+                if (tem4 == 0) break;
+                count4++;
+            }
+
+            if (tem4 == 0) {
+                bearslist.remove(count4);
+                System.out.println("bear died***************");
+            }
+        }
+        int tem5 = 0;
+        while (tem5 == 0) {
+            tem5 = 1;
+            int count5 = 0;
+            for (Lion lion : lionslist) {
+                for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+                    if (defenderAnimal.xVal == lion.xVal && defenderAnimal.yVal == lion.yVal) {
+                        //defenderAnimalslist.remove(defenderAnimal);
+                        System.out.println("dog died******************");
+                        tem4 = 0;
+                        break;
+
+                    }
+
+                }
+                if (tem5 == 0) break;
+                count5++;
+            }
+
+            if (tem5 == 0) {
+                lionslist.remove(count5);
+                System.out.println("lion died***************");
+            }
+        }
+*/
+
+    }
+    private void animalMakingProduct(DomesticAnimal domesticAnimal) {
+        if (domesticAnimal.getName().equals("chicken")) {// TODO: 6/16/2021
+            Egg egg=new Egg(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "egg");
+            eggslist.add(egg);
+            onMapProduct.add(egg);
+        }
+        else if (domesticAnimal.getName().equals("turkey")) {
+            Feather feather=new Feather(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "feather");
+            featherslist.add(feather);
+            onMapProduct.add(feather);
+        }
+        else if (domesticAnimal.getName().equals("buffalo")) {
+            Milk milk=new Milk(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "milk");
+            milkslist.add(milk);
+            onMapProduct.add(milk);
         }
     }
 
+
+
+
+
+    private void movingWildAndDog() {
+
+        for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+            if(defenderAnimal instanceof Dog){
+
+
+            int tem = random.nextInt(4);
+
+
+
+            switch (tem) {
+                case 0:
+                    if (defenderAnimal.xVal < 5)
+                        defenderAnimal.xVal += 1;
+                    else defenderAnimal.xVal -= 1;
+                case 1:
+                    if (defenderAnimal.xVal > 0)
+                        defenderAnimal.xVal -= 1;
+                    else defenderAnimal.xVal += 1;
+                case 2:
+                    if (defenderAnimal.yVal < 5)
+                        defenderAnimal.yVal += 1;
+                    else defenderAnimal.yVal -= 1;
+                case 3:
+                    if (defenderAnimal.yVal > 0)
+                        defenderAnimal.yVal -= 1;
+                    else defenderAnimal.yVal += 1;
+                default:
+                    break;
+            }
+        }}
+        for (WildAnimal wildAnimal : wildAnimalsList) {
+            int tem = random.nextInt(4);
+
+            switch (tem) {
+                case 0:
+                    if (wildAnimal.xVal < 5)
+                        wildAnimal.xVal += 1;
+                    else wildAnimal.xVal -= 1;
+                case 1:
+                    if (wildAnimal.xVal > 0)
+                        wildAnimal.xVal -= 1;
+                    else wildAnimal.xVal += 1;
+                case 2:
+                    if (wildAnimal.yVal < 5)
+                        wildAnimal.yVal += 1;
+                    else wildAnimal.yVal -= 1;
+                case 3:
+                    if (wildAnimal.yVal > 0)
+                        wildAnimal.yVal -= 1;
+                    else wildAnimal.yVal += 1;
+                default:
+                    break;
+            }
+
+        }
+
+
+
+    }
     private Product makebearProduct(Bear bear) {
         BearProduct bearProduct = new BearProduct(bear.xVal, bear.yVal, "bearProduct");
-        onMapProduct.add(new BearProduct(bear.xVal, bear.yVal, "bearProduct"));
+        onMapProduct.add(bearProduct);
         return bearProduct;
     }
-
     private Product makelionProduct(Lion lion) {
         LionProduct lionProduct = new LionProduct(lion.xVal, lion.yVal, "lionProduct");
-        onMapProduct.add(new LionProduct(lion.xVal, lion.yVal, "lionProduct"));
+        onMapProduct.add(lionProduct);
         return lionProduct;
     }
     private Product maketigerProduct(Tiger tiger) {
         TigerProduct tigerProduct = new TigerProduct(tiger.xVal, tiger.yVal, "tigerProduct");
-        onMapProduct.add(new TigerProduct(tiger.xVal, tiger.yVal, "tigerProduct"));
+        onMapProduct.add(tigerProduct);
         return tigerProduct;
     }
+    private void putBear() {
+        for (Integer integer : bearArrivalTime) {
+            if (integer == currentTurn)
+            {bearslist.add(new Bear("bear"));
+                wildAnimalsList.add(new Bear("bear"));
+            }}
 
-    public void buyAnimal(String[] split) {
-
-        if (split[1].equals("dog")) {
-            if (currentPlayer.getMoney() < 100) {
-                System.out.println("not enough money");
-                return;
-            } else {
-                defenderAnimalslist.add(new Dog("dog"));
+        for (Integer integer : lionArrivalTime) {
+            if (integer == currentTurn)
+            {
+                lionslist.add(new Lion("lion"));
+                wildAnimalsList.add(new Lion(("lion")));
             }
         }
-        else if (split[1].equals("cat")){
-            if (currentPlayer.getMoney() < 150) {
-                System.out.println("not enough money");
-                return;
-            } else {
-                defenderAnimalslist.add(new Cat("cat"));
+        for (Integer integer : tigerArrivalTime) {
+            if (integer == currentTurn)
+            {
+                tigerslist.add(new Tiger("tiger"));
+                wildAnimalsList.add(new Tiger("tiger"));
             }
-        }
-
-        //if (currentPlayer.getMoney()<)
-        DomesticAnimal d;
-        //animalslist.add(d = new DomesticAnimal(split[1]));
-        domesticAnimalsList.add(d = new DomesticAnimal(split[1]));
-        if (currentPlayer.getMoney() < d.getPrice()) {
-            System.out.println("not enough money");
-            return;
-        }
-        currentPlayer.setMoney(currentPlayer.getMoney() - d.getPrice());
-        if (split[1].equals("chicken"))
-            map[d.xVal][d.yVal] = "c";
-        else if (split[1].equals("turkey"))
-            map[d.xVal][d.yVal] = "turkey";
-        else if (split[1].equals("buffalo"))
-            map[d.xVal][d.yVal] = "buffalo";
-
-
-        System.out.println("animals : ");
-        for (Animal animal : domesticAnimalsList) {
-            System.out.println(animal.getName());
-            System.out.println(animal.getxVal());
-            System.out.println(animal.getyVal());
-
-        }
-        System.out.println("eggs");
-        for (Egg egg : eggslist) {
-            System.out.println(egg.xVal);
-            System.out.println(egg.yVal);
-
-        }
-        System.out.println("feathers");
-        for (Feather feather : featherslist) {
-            System.out.println(feather.xVal);
-            System.out.println(feather.yVal);
-
-        }
-
-        System.out.println("milks");
-        for (Milk milk : milkslist) {
-            System.out.println(milk.xVal);
-            System.out.println(milk.yVal);
-
-        }
-
-
-    }
-
-    public void plant(String[] split) {
-        if (waterTank.getLevelOfWater() < 1) {
-            System.out.println("no water");
-        } else {
-            waterTank.setLevelOfWater(waterTank.getLevelOfWater() - 1);
-            int xval = Integer.parseInt(split[1]);
-            int yval = Integer.parseInt(split[2]);
-            map[xval - 1][yval - 1] = "p";
-            /*for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 6; j++) {
-                    System.out.print(map[i][j]);
-                }
-                System.out.println();
-            }*/
         }
     }
 
-    public void wellWater() {
-        //waterTank.setLevelOfWater(5);
-        if (waterTank.getLevelOfWater() != 0)
-            System.out.println("you have still water in tank");
-        else
-            waterTank.setLevelOfRefulling(4);
-    }
 
-
-
-    public void updateEveryThing() {
-        try {
-            String info = "";
-            FileReader fileReader2 = new FileReader("users.txt");
-            BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
-            while (((info = bufferedReader2.readLine())) != null) {
-                System.out.println(info.split("\\s")[2]);
-                playersList.add(new Player(info.split("\\s")[0], info.split("\\s")[1], Integer.parseInt(info.split("\\s")[2])));
-            }
-            bufferedReader2.close();
-            for (Player player : playersList) {
-                System.out.println(player.getUserName() + "  " + player.getPassWord() + " " + player.getLevel());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     private void productTimePass(){
@@ -1253,9 +1766,13 @@ if (fabricMakerslist.size()==1) {
         int index=-1;
         while (!temp){
             for (Product product : onMapProduct) {
-                if(product.xVal==x&&product.yVal==y){
-                    index=onMapProduct.indexOf(product);
-                    break;
+                if(product.xVal==x&&product.yVal==y&&product.size<gainedProductFreeSpace()){
+
+                        index=onMapProduct.indexOf(product);
+                        break;
+
+
+
                 }
             }
             if(index==-1) temp=true;
@@ -1264,5 +1781,125 @@ if (fabricMakerslist.size()==1) {
             }
         }
     }
+    private void domesticsMoveWisely(){
+        for (DomesticAnimal domesticAnimal : domesticAnimalsList) {
+            wiseMovementForDomestic(domesticAnimal);
+        }
+    }
+    private void wiseMovementForDomestic(DomesticAnimal domesticAnimal){
+        int x=domesticAnimal.xVal;
+        int y=domesticAnimal.yVal;
+        int minX=-1;
+        int minY=-1;
+        int minDistance=64;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j <6 ; j++) {
+                if(grassMap[i][j]>0){
+                    if(((i-x)*(i-x))+((j-y)*(j-y))<minDistance)
+                    {
+                        minX=i;
+                        minX=j;
+                        minDistance=((i-x)*(i-x))+((j-y)*(j-y));
+                    }
+                }
+            }
+            if(minX!=-1){
+                if(Math.abs(minX-x)>Math.abs(minY-y)) {
+                    if(minY>y) y+=1;
+                    else if(minY<y) y-=1;
 
+                }
+                else {
+                    if(minX<x) x-=1;
+                    if(minX>x) x+=1;
+
+                }
+                domesticAnimal.yVal=y;
+                domesticAnimal.xVal=x;
+
+            }
+            else randomMove(domesticAnimal);
+
+
+        }
+    }
+    private void wiseMovementForCat(Cat cat){
+        int x=cat.xVal;
+        int y=cat.yVal;
+        int minX=-1;
+        int minY=-1;
+        int minDistance=64;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j <6 ; j++) {
+                if(isAnItemInThisSpot(i,j)){
+                    if(((i-x)*(i-x))+((j-y)*(j-y))<minDistance)
+                    {
+                        minX=i;
+                        minX=j;
+                        minDistance=((i-x)*(i-x))+((j-y)*(j-y));
+                    }
+                }
+            }
+            if(minX!=-1){
+                if(Math.abs(minX-x)>Math.abs(minY-y)) {
+                    if(minY>y) y+=1;
+                    else if(minY<y) y-=1;
+
+                }
+                else {
+                    if(minX<x) x-=1;
+                    if(minX>x) x+=1;
+
+                }
+                cat.yVal=y;
+                cat.xVal=x;
+
+            }
+            else randomMove(cat);
+
+
+        }
+    }
+    private void catsMoveWisely(){
+        for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+            if(defenderAnimal instanceof Cat) wiseMovementForCat((Cat)defenderAnimal);
+        }
+    }
+    private void randomMove(Animal animal){
+        int tem = random.nextInt(4);
+
+
+
+        switch (tem) {
+            case 0:
+                if (animal.xVal < 5)
+                    animal.xVal += 1;
+                else animal.xVal -= 1;
+            case 1:
+                if (animal.xVal > 0)
+                    animal.xVal -= 1;
+                else animal.xVal += 1;
+            case 2:
+                if (animal.yVal < 5)
+                    animal.yVal += 1;
+                else animal.yVal -= 1;
+            case 3:
+                if (animal.yVal > 0)
+                    animal.yVal -= 1;
+                else animal.yVal += 1;
+            default:
+                break;
+        }
+    }
+    private boolean isAnItemInThisSpot(int x,int y){
+        for (Product product : onMapProduct) {
+            if(product.xVal==x&&product.yVal==y) return true;
+        }
+        return false;
+    }
+    private void justTigersMove(){
+        for (Tiger tiger : tigerslist) {
+            randomMove(tiger);
+        }
+    }
 }

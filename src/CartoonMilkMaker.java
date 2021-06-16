@@ -7,6 +7,8 @@ public class CartoonMilkMaker extends Building {
             status=0;
             xVal = 4;
             yVal = 5;
+        updated=false;
+        twoProduct=false;
         }
 
 }

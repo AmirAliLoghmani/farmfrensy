@@ -7,7 +7,8 @@ public class Building {
     protected int neededTime;
     protected int refullingLevel;
     protected int status;
-
+    protected boolean updated;
+    protected boolean twoProduct;
 
    /* public Building(String name, int price, int neededTime) {
         this.name = name;

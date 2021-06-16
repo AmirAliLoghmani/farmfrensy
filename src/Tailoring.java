@@ -6,5 +6,7 @@ public class Tailoring extends  Building {
         status=0;
         xVal = 3;
         yVal = 5;
+        updated=false;
+        twoProduct=false;
     }
 }

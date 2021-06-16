@@ -8,6 +8,8 @@ public class FabricMaker extends Building{
         status=0;
         xVal = 5;
         yVal = 0;
+        updated=false;
+        twoProduct=false;
     }
 
 }

@@ -3,5 +3,6 @@ public class BearProduct extends WildAnimalProduct{
         super(xVal, yVal, name);
         price = 400;
         health=5;
+        size=15;
     }
 }
