@@ -83,4 +83,7 @@ public class Messages {
     public static void WorkWithTwoTimesOfNormalSpeedMessage(){
         System.out.println("building is working with two times Of normal speed");
     }
+    public static void truckIsBusyMessage(){
+        System.out.println("truck is already at work");
+    }
 }

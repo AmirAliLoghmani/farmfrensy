@@ -49,6 +49,7 @@ public class Manager {
     ArrayList<Milk> milkslist = new ArrayList<Milk>();
     ArrayList<Bread> breadslist = new ArrayList<Bread>();
     ArrayList<IceCream> icecreamslist = new ArrayList<IceCream>();
+    ArrayList<CartoonMilk> cartoonMilkList=new ArrayList<>();
     ArrayList<Clothe> clotheslist = new ArrayList<Clothe>();
     ArrayList<Feather> featherslist = new ArrayList<Feather>();
     ArrayList<Flour> flourslist = new ArrayList<Flour>();
@@ -106,13 +107,21 @@ public class Manager {
           Messages.truckSentFailedMessage();
           log.errorLog(currentPlayer.getUserName(),"truck sending failed.Truck storage is empty");
 
-        } else {
-            truck.refullingLevel = truck.neededTime;
-            Messages.truckSentMessage();
-            log.infoLog(currentPlayer.getUserName(),"Truck  was sent successfully");
+        }
+        else{
+            if(truck.refullingLevel==0){
+
+                truck.refullingLevel = truck.neededTime;
+                Messages.truckSentMessage();
+                log.infoLog(currentPlayer.getUserName(),"Truck  was sent successfully");
+            }
+            else {
+                Messages.truckIsBusyMessage();
+                log.errorLog(currentPlayer.getUserName(),"Truck sending failed .Truck is at work now ");
+            }
         }
 
-    }// TODO: 6/17/2021
+    }
 
 
 
@@ -927,6 +936,7 @@ public class Manager {
         if (chickenGoal < 1 && turkeyGoal < 1 && buffaloGoal < 1 && coinGoal <= currentPlayer.getMoney()) {
             status = "win";
             System.out.println("wiiiiiiiiiin");
+            log.infoLog(currentPlayer.getUserName(),"level finished");
             System.out.println(currentLevel);
             currentTurn = 1;
 
@@ -1050,12 +1060,12 @@ public class Manager {
                 cartoonMilkMakerslist.get(0).refullingLevel--;
             } else if (cartoonMilkMakerslist.get(0).refullingLevel == 1) {
                 //making product
-                Milk temp4=new Milk(4, 5, "milk");
-                milkslist.add(temp4);
+                CartoonMilk temp4=new CartoonMilk(4, 5, "milk");
+                cartoonMilkList.add(temp4);
                 onMapProduct.add(temp4);
                 if(cartoonMilkMakerslist.get(0).twoProduct){
-                    Milk veryTemp4=new Milk(4, 5, "milk");
-                    milkslist.add(veryTemp4);// TODO: 6/16/2021
+                    CartoonMilk veryTemp4=new CartoonMilk(4, 5, "milk");
+                    cartoonMilkList.add(veryTemp4);
                     onMapProduct.add(veryTemp4);
                     cartoonMilkMakerslist.get(0).twoProduct=false;
                 }

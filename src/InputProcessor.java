@@ -31,6 +31,7 @@ public class InputProcessor {
         if (pass.equals(scanner.nextLine())) {
             manager.currentLevel = lvl;
             manager.currentPlayer = p;
+            manager.log.infoLog(p.getUserName(),"player entered game");
             startPanel();
             return true;
         }
@@ -47,7 +48,9 @@ public class InputProcessor {
             System.out.println("1 : Log in");
             System.out.println("2 : Sign Up");
             if (console.nextLine().equals("1"))
+            {
                 checking = loginProcess();
+            }
             else if (console.nextLine().equals("2"))
                 checking = signUpProcess();
             //if (checking)
@@ -86,15 +89,22 @@ public class InputProcessor {
             System.out.println(player.getUserName());
         }
         manager.currentLevel = 1;
+        manager.log.infoLog(manager.currentPlayer.getUserName(),"new game begin");
         startPanel();
         return true;
     }
     public void saveEveryThing() {
         try {
+            int tem=1;
             FileWriter fw = new FileWriter("users.txt");
             BufferedWriter bw = new BufferedWriter(fw);
             for (Player player : manager.playersList) {
-                bw.append(player.getUserName() + " " + player.getPassWord() + " " + (player.getLevel()-1) + "\n");
+                if (player.getLevel()>1)
+                    tem = player.getLevel()-1;
+                else if (player.getLevel()==1)
+                    tem=1;
+                System.out.println(player.getUserName() + " " + player.getPassWord() + " " + (player.getLevel()) + "\n");
+                bw.append(player.getUserName() + " " + player.getPassWord() + " " + player.getLevel()+ "\n");
             }
             //bw.append(username + " " + pass);
             bw.close();
@@ -106,7 +116,7 @@ public class InputProcessor {
                 System.out.println(animal.getxVal());
             }
             bw2.close();
-
+            manager.log.infoLog(manager.currentPlayer.getUserName(),"save");
             /*for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 6; j++) {
                     System.out.print(map[i][j]);
@@ -135,6 +145,8 @@ public class InputProcessor {
     }
 
     public void startPanel() {
+        if(!choosingLevel())
+            return;
         Messages.startMessage();
         try {
             if (manager.status.equals("finished")) {
@@ -248,13 +260,26 @@ public class InputProcessor {
                 else if (input.equalsIgnoreCase("TRUCK GO"))
                     manager.sendingTruck();
                 if (manager.status.equals("win")||manager.status.equals("finished")) {
-                    System.out.println("you finished the level");
+                   /* System.out.println("you finished the level");
                     manager.log.infoLog(manager.currentPlayer.getUserName(),"level is finished");
                     manager.status = "progress";
                     //if(manager.currentLevel==manager.lastLevelThatIsFinished) manager.lastLevelThatIsFinished+=1;
                     manager.currentLevel++;
                     readingOrderFile();
-                    saveEveryThing();
+                    saveEveryThing();*/
+                    if (manager.currentPlayer.getLevel()==manager.currentLevel  &&  manager.currentLevel!=manager.numberOfLevels)
+                        manager.currentPlayer.setLevel(manager.currentPlayer.getLevel()+1);
+                    System.out.println("duddd"); saveEveryThing();
+                    if (choosingLevel()){
+
+                        System.out.println("saving...");
+
+                        manager.status = "progress";
+                        readingOrderFile();
+
+
+                    }
+                    else return;
                     //startPanel();
                 }
                 if (manager.status.equals("finished"))
@@ -267,6 +292,29 @@ public class InputProcessor {
         } else if (choice.equals("3")) {
             saveEveryThing();
         }
+    }
+    public boolean choosingLevel(){
+        System.out.println("LEVELS : \n (you can log out either by writing 0)");
+        for (int i = 1; i <= manager.currentPlayer.getLevel(); i++) {
+            if (i==4)break;                                     //fix it
+            System.out.println("level  "+ i);
+        }
+
+        String s="";
+        //int tem =scanner.nextInt();
+        int tem=0;
+        while (tem==0){
+            s = scanner.nextLine();
+            if (Integer.parseInt(s)==0){
+                return false;
+            }
+            if (Integer.parseInt(s)<=manager.currentPlayer.getLevel()) {
+                tem=1;
+                manager.currentLevel = Integer.parseInt(s);
+                return true;
+            }}
+
+        return true;
     }
 
     private void readingOrderFile(){
@@ -339,6 +387,8 @@ public class InputProcessor {
 
     }
     private void logoutProcess() {
+        manager.log.infoLog(manager.currentPlayer.getUserName(),"log out");
+
         return;
     }
 
