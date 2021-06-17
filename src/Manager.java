@@ -89,6 +89,7 @@ public class Manager {
         gaindproductslist.clear();
         eggslist.clear();
         milkslist.clear();
+        cartoonMilkList.clear();
         breadslist.clear();
         icecreamslist.clear();
         clotheslist.clear();
@@ -552,8 +553,22 @@ public class Manager {
 
         }
         if (tem == 1)
-            icecreamslist.remove(c);
+            cartoonMilkList.remove(c);
+        c = 0;
+        tem = 0;
+        for (CartoonMilk cartoonMilk : cartoonMilkList) {
+            if (cartoonMilk.xVal == x && cartoonMilk.yVal == y&&onMapProduct.contains(cartoonMilk)&&gainedProductFreeSpace()>=2) {
+                gaindproductslist.add(new IceCream(cartoonMilk.xVal, cartoonMilk.yVal, "cartoonMilk"));
+                c=icecreamslist.indexOf(cartoonMilk);
+                onMapProduct.remove(cartoonMilk);
+                picked=true;
+                tem = 1;
+                break;
+            }
 
+        }
+        if (tem == 1)
+            cartoonMilkList.remove(c);
 
 
         c = 0;
@@ -1195,7 +1210,12 @@ public class Manager {
             System.out.println(milk.yVal);
 
         }
+        System.out.println("cartoonMilks");
+        for (CartoonMilk cartoonMilk : cartoonMilkList) {
+            System.out.println(cartoonMilk.xVal);
+            System.out.println(cartoonMilk.yVal);
 
+        }
         animalsEatingPlant();
         System.out.println("bearlists : ");
         for (Bear bear : bearslist) {
