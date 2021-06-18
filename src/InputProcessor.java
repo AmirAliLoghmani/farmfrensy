@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class InputProcessor {
+
     Scanner scanner = new Scanner(System.in);
     private Manager manager;
     public InputProcessor(Manager manager) {
@@ -31,7 +32,6 @@ public class InputProcessor {
         if (pass.equals(scanner.nextLine())) {
             manager.currentLevel = lvl;
             manager.currentPlayer = p;
-            manager.log.infoLog(p.getUserName(),"player entered game");
             startPanel();
             return true;
         }
@@ -48,9 +48,7 @@ public class InputProcessor {
             System.out.println("1 : Log in");
             System.out.println("2 : Sign Up");
             if (console.nextLine().equals("1"))
-            {
                 checking = loginProcess();
-            }
             else if (console.nextLine().equals("2"))
                 checking = signUpProcess();
             //if (checking)
@@ -89,7 +87,6 @@ public class InputProcessor {
             System.out.println(player.getUserName());
         }
         manager.currentLevel = 1;
-        manager.log.infoLog(manager.currentPlayer.getUserName(),"new game begin");
         startPanel();
         return true;
     }
@@ -116,7 +113,7 @@ public class InputProcessor {
                 System.out.println(animal.getxVal());
             }
             bw2.close();
-            manager.log.infoLog(manager.currentPlayer.getUserName(),"save");
+
             /*for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 6; j++) {
                     System.out.print(map[i][j]);
@@ -234,7 +231,7 @@ public class InputProcessor {
             String[] split;
             while (!((input = scanner.nextLine()).equals("exit"))) {
                 split = input.split("\\s");
-                if (input.toUpperCase().startsWith("BUY")) {
+                if (input.startsWith("BUY")) {
                     processBuy(split);
                 } else if (input.equalsIgnoreCase("WELL"))
                     manager.wellWater();
@@ -387,8 +384,6 @@ public class InputProcessor {
 
     }
     private void logoutProcess() {
-        manager.log.infoLog(manager.currentPlayer.getUserName(),"log out");
-
         return;
     }
 
@@ -468,6 +463,5 @@ public class InputProcessor {
         }
     }
 }
-
 
 
