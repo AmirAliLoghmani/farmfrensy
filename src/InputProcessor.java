@@ -234,7 +234,7 @@ public class InputProcessor {
             String[] split;
             while (!((input = scanner.nextLine()).equals("exit"))) {
                 split = input.split("\\s");
-                if (input.startsWith("BUY")) {
+                if (input.toUpperCase().startsWith("BUY")) {
                     processBuy(split);
                 } else if (input.equalsIgnoreCase("WELL"))
                     manager.wellWater();

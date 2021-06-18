@@ -491,7 +491,7 @@ public class Manager {
         c = 0;
         tem = 0;
         for (Bread bread : breadslist) {
-            if (bread.xVal == x && bread.yVal == y&&onMapProduct.contains(bread)&&gainedProductFreeSpace()>=4) {
+            if (bread.xVal == x && bread.yVal == y/*&&onMapProduct.contains(bread)*/&&gainedProductFreeSpace()>=4) {
                 gaindproductslist.add(new Bread(bread.xVal, bread.yVal, "bread"));
                 c=breadslist.indexOf(bread);
                 onMapProduct.remove(bread);
@@ -733,6 +733,11 @@ public class Manager {
             System.out.println(product.xVal +"  "+ product.yVal+"  "+ product.getName());
         }
     }
+    private  void showOnMapProduct(){
+        for (Product product : onMapProduct) {
+            System.out.println(product.xVal +"  "+ product.yVal+"  "+ product.getName());
+        }
+    }
     public void wellWater() {
         //waterTank.setLevelOfWater(5);
         if (waterTank.getLevelOfWater() != 0)
@@ -915,6 +920,7 @@ public class Manager {
         int n=Integer.parseInt(split[1]);
     for (int i = 0; i <n ; i++) {
         turnTime();
+        showOnMapProduct();
     }
 }
     private void turnTime() {
@@ -1737,22 +1743,24 @@ if(split[1].equalsIgnoreCase("icecreammaker")){
     private void putBear() {
         for (Integer integer : bearArrivalTime) {
             if (integer == currentTurn)
-            {bearslist.add(new Bear("bear"));
-                wildAnimalsList.add(new Bear("bear"));
+            {
+                Bear temp=new Bear("bear");
+            bearslist.add(temp);
+                wildAnimalsList.add(temp);
             }}
 
         for (Integer integer : lionArrivalTime) {
             if (integer == currentTurn)
-            {
-                lionslist.add(new Lion("lion"));
-                wildAnimalsList.add(new Lion(("lion")));
+            {Lion veryTemp=new Lion("lion");
+                lionslist.add(veryTemp);
+                wildAnimalsList.add(veryTemp);
             }
         }
         for (Integer integer : tigerArrivalTime) {
             if (integer == currentTurn)
-            {
-                tigerslist.add(new Tiger("tiger"));
-                wildAnimalsList.add(new Tiger("tiger"));
+            {   Tiger veryVeryTemp=new Tiger("tiger");
+                tigerslist.add(veryVeryTemp);
+                wildAnimalsList.add(veryVeryTemp);
             }
         }
     }
