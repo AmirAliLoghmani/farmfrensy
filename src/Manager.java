@@ -1894,7 +1894,7 @@ public class Manager {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 if (grassMap[i][j] > 0) {
-                    if (((i - x) * (i - x)) + ((j - y) * (j - y)) < minDistance) {
+                    if (((i - x) * (i - x)) + ((j - y) * (j - y)) < minDistance&&(((i - x) * (i - x)) + ((j - y) * (j - y)) >0)) {
                         minX = i;
                         minY = j;
                         minDistance = ((i - x) * (i - x)) + ((j - y) * (j - y));
@@ -1906,7 +1906,7 @@ public class Manager {
 
         }
         if (minX != -1) {
-            System.out.println("not random");
+
             if ((Math.abs(minX - x) > Math.abs(minY - y))&&(minY!=y)) {
                 if (minY > y) y += 1;
                 else  y -= 1;
