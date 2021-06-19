@@ -12,6 +12,7 @@ public class Manager {
 
 
     String status = "progress";
+    int leftPrize=0;
     int currentTurn = 1;
     //int wildAnimalTime[][];
     int maxTime;
@@ -416,6 +417,7 @@ public class Manager {
                 gaindproductslist.add(new Fabric(fabric.xVal, fabric.yVal, "fabric"));
                 c = fabriclist.indexOf(fabric);
                 onMapProduct.remove(fabric);
+                onMapProduct.remove(fabric);
                 tem = 1;
                 picked = true;
                 break;
@@ -620,7 +622,7 @@ public class Manager {
         }
 
 
-       else {
+        else {
             DomesticAnimal d;
 
             if (split[1].equalsIgnoreCase("chicken") || split[1].equalsIgnoreCase("turkey") || split[1].equalsIgnoreCase("buffalo")) {
@@ -893,6 +895,8 @@ public class Manager {
     int buffalocount = 0;
 
     private void turnTime() {
+        System.out.println("***********************");
+        System.out.println("current money :  " + currentPlayer.getMoney());
         System.out.println("turns passed :  " + currentTurn);
         for (int i = 1; i < 6; i++) {
             for (int j = 1; j < 6; j++) {
@@ -932,6 +936,11 @@ public class Manager {
         if (coinGoal <= currentPlayer.getMoney())
             coinGoal = -1;
         if (chickenGoal < 1 && turkeyGoal < 1 && buffaloGoal < 1 && coinGoal <= currentPlayer.getMoney()) {
+            currentPlayer.setMoney(0);
+            if (currentTurn<maxTime){
+                System.out.println("prize earned");
+                leftPrize=prizeEndingQuick;
+            }
             status = "win";
             System.out.println("YOU WON!!!  ");
             log.infoLog(currentPlayer.getUserName(), "level finished");
@@ -957,7 +966,7 @@ public class Manager {
         if (coinGoal != -1)
             System.out.println("CoinGoal :     catched  :  " + coinGoal + "  goal  :  " + currentPlayer.getMoney());
 
-        System.out.println("PRODUCTS ON MAP : ");
+        //System.out.println("PRODUCTS ON MAP : ");
        /* System.out.println(onMapProduct.size());
         for (Product product : onMapProduct) {
             System.out.println(product.getName());
@@ -1190,7 +1199,7 @@ public class Manager {
             System.out.println(animal.getHealth());
 
         }
-        System.out.println("eggs");
+        /*System.out.println("eggs");
         for (Egg egg : eggslist) {
             System.out.print(egg.xVal + "  ");
             System.out.println(egg.yVal);
@@ -1249,7 +1258,7 @@ public class Manager {
             System.out.println(iceCream.yVal);
 
         }
-
+*/
 
         animalsEatingPlant();
         System.out.println("bearlists : ");
@@ -1270,7 +1279,7 @@ public class Manager {
             for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
                 if(defenderAnimal instanceof Dog){
                     if(((Dog) defenderAnimal).alive)
-                    System.out.println(defenderAnimal.xVal+" "+defenderAnimal.yVal);
+                        System.out.println(defenderAnimal.xVal+" "+defenderAnimal.yVal);
                 }
             }
         }
@@ -1333,7 +1342,7 @@ public class Manager {
         }
 */
 
-
+        System.out.println("***********************");
     }
 
     private void animalsEatingPlant() {
@@ -1553,38 +1562,38 @@ public class Manager {
 
 
 
-                for (WildAnimal wildAnimal : wildAnimalsList) {
-                    if (wildAnimal.xVal == defenderAnimal.xVal && wildAnimal.yVal == defenderAnimal.yVal) {
-                        indexOfWild = wildAnimalsList.indexOf(wildAnimal);
-                        indexOfDogs=defenderAnimalslist.indexOf(defenderAnimal);
-                        break;
+                    for (WildAnimal wildAnimal : wildAnimalsList) {
+                        if (wildAnimal.xVal == defenderAnimal.xVal && wildAnimal.yVal == defenderAnimal.yVal) {
+                            indexOfWild = wildAnimalsList.indexOf(wildAnimal);
+                            indexOfDogs=defenderAnimalslist.indexOf(defenderAnimal);
+                            break;
+                        }
                     }
-                }
-                if (indexOfWild != -1) {
-                    if (wildAnimalsList.get(indexOfWild).getName().equalsIgnoreCase("tiger"))
-                        tigerslist.remove(wildAnimalsList.get(indexOfWild));
-                    else if (wildAnimalsList.get(indexOfWild).getName().equalsIgnoreCase("lion"))
-                        lionslist.remove(wildAnimalsList.get(indexOfWild));
-                    else bearslist.remove(wildAnimalsList.get(indexOfWild));
-                   ((Dog) defenderAnimal).alive=false;
-                }
-            }}
+                    if (indexOfWild != -1) {
+                        if (wildAnimalsList.get(indexOfWild).getName().equalsIgnoreCase("tiger"))
+                            tigerslist.remove(wildAnimalsList.get(indexOfWild));
+                        else if (wildAnimalsList.get(indexOfWild).getName().equalsIgnoreCase("lion"))
+                            lionslist.remove(wildAnimalsList.get(indexOfWild));
+                        else bearslist.remove(wildAnimalsList.get(indexOfWild));
+                        ((Dog) defenderAnimal).alive=false;
+                    }
+                }}
         }
 
 
 
     }
-private void destroyingProducts(){
+    private void destroyingProducts(){
         ArrayList<Integer> indexes=new ArrayList<>();
-    for (WildAnimal wildAnimal : wildAnimalsList) {
-        for (Product product : onMapProduct) {
-            if(wildAnimal.xVal==product.xVal&&wildAnimal.yVal==product.yVal) indexes.add(onMapProduct.indexOf(product));
+        for (WildAnimal wildAnimal : wildAnimalsList) {
+            for (Product product : onMapProduct) {
+                if(wildAnimal.xVal==product.xVal&&wildAnimal.yVal==product.yVal) indexes.add(onMapProduct.indexOf(product));
+            }
+        }
+        for (int i = 0; i <indexes.size() ; i++) {
+            onMapProduct.remove(i);
         }
     }
-    for (int i = 0; i <indexes.size() ; i++) {
-        onMapProduct.remove(i);
-    }
-}
     private void destroyingfunction() {
         destroyDomesticAnimals();
         dogVsWilds();
@@ -1695,8 +1704,8 @@ private void destroyingProducts(){
 
     private void movingWildAndDog() {
         int tem;
-      for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
-             tem = random.nextInt(4);
+        for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+            tem = random.nextInt(4);
             random.nextInt();
             if (defenderAnimal instanceof Dog) {
 
@@ -1706,19 +1715,20 @@ private void destroyingProducts(){
 
 
                 if(tem==0) {
-                    if (defenderAnimal.xVal < 5)
+
+                    if (defenderAnimal.xVal < 6)
                         defenderAnimal.xVal += 1;
                     else defenderAnimal.xVal -= 1;
                 }else if(tem==1) {
-                    if (defenderAnimal.xVal > 0)
+                    if (defenderAnimal.xVal > 1)
                         defenderAnimal.xVal -= 1;
                     else defenderAnimal.xVal += 1;
                 }else if(tem==2) {
-                    if (defenderAnimal.yVal < 5)
+                    if (defenderAnimal.yVal < 6)
                         defenderAnimal.yVal += 1;
                     else defenderAnimal.yVal -= 1;
                 }else if(tem==3) {
-                    if (defenderAnimal.yVal > 0)
+                    if (defenderAnimal.yVal > 1)
                         defenderAnimal.yVal -= 1;
                     else defenderAnimal.yVal += 1;
                 }
@@ -1731,19 +1741,23 @@ private void destroyingProducts(){
             tem=random.nextInt(4);
 
             if(tem==0) {
-                if (wildAnimal.xVal < 5)
+                //  System.out.println(0);
+                if (wildAnimal.xVal < 6)
                     wildAnimal.xVal += 1;
                 else wildAnimal.xVal -= 1;
             }else if(tem==1) {
-                if (wildAnimal.xVal > 0)
+                //System.out.println(1);
+                if (wildAnimal.xVal > 1)
                     wildAnimal.xVal -= 1;
                 else wildAnimal.xVal += 1;
             }else if(tem==2) {
-                if (wildAnimal.yVal < 5)
+                // System.out.println(2);
+                if (wildAnimal.yVal < 6)
                     wildAnimal.yVal += 1;
                 else wildAnimal.yVal -= 1;
             }else if(tem==3) {
-                if (wildAnimal.yVal > 0)
+                //System.out.println(3);
+                if (wildAnimal.yVal > 1)
                     wildAnimal.yVal -= 1;
                 else wildAnimal.yVal += 1;
             }
@@ -1830,8 +1844,8 @@ private void destroyingProducts(){
         split[1]="no";
         split[2]=String.valueOf(cat.xVal);
         split[3]=String.valueOf(cat.yVal);
-    pickUpProperty(split);
-       // removingItemsOnTheSpot(cat.xVal, cat.yVal);
+        pickUpProperty(split);
+        // removingItemsOnTheSpot(cat.xVal, cat.yVal);
     }
 
     private void catsCollecting() {
@@ -1846,11 +1860,8 @@ private void destroyingProducts(){
         while (!temp) {
             for (Product product : onMapProduct) {
                 if (product.xVal == x && product.yVal == y && product.size < gainedProductFreeSpace()) {
-
                     index = onMapProduct.indexOf(product);
                     break;
-
-
                 }
             }
             if (index == -1) temp = true;
@@ -1866,7 +1877,7 @@ private void destroyingProducts(){
             wiseMovementForDomestic(domesticAnimal);
         }
     }
-private void dogsMoveWisely(){
+    private void dogsMoveWisely(){
         for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
             if (defenderAnimal instanceof Dog) {
                 if(((Dog) defenderAnimal).alive)
@@ -1890,33 +1901,35 @@ private void dogsMoveWisely(){
                     }
                 }
             }
-            if (minX != -1) {
-                System.out.println("not random");
-                if ((Math.abs(minX - x) > Math.abs(minY - y))&&(minY!=y)) {
-                    if (minY > y) y += 1;
-                    else  y -= 1;
 
-                }
-                else if ((Math.abs(minX - x) < Math.abs(minY - y))&&(minX!=x)) {
-                    if (minX > x) x += 1;
-                    else  x -= 1;
-
-                }
-                else if((minY!=y)&&(minX==x)){
-                    if (minY > y) y += 1;
-                    else  y -= 1;
-                }
-                else if((minY==y)&&(minX!=x)){
-                    if (minX > x) x += 1;
-                    else  x -= 1;
-                }
-                domesticAnimal.yVal = y;
-                domesticAnimal.xVal = x;
-
-            } else randomMove(domesticAnimal);
 
 
         }
+        if (minX != -1) {
+            System.out.println("not random");
+            if ((Math.abs(minX - x) > Math.abs(minY - y))&&(minY!=y)) {
+                if (minY > y) y += 1;
+                else  y -= 1;
+
+            }
+            else if ((Math.abs(minX - x) < Math.abs(minY - y))&&(minX!=x)) {
+                if (minX > x) x += 1;
+                else  x -= 1;
+
+            }
+            else if((minY!=y)&&(minX==x)){
+                if (minY > y) y += 1;
+                else  y -= 1;
+            }
+            else if((minY==y)&&(minX!=x)){
+                if (minX > x) x += 1;
+                else  x -= 1;
+            }
+            domesticAnimal.yVal = y;
+            domesticAnimal.xVal = x;
+
+        } else randomMove(domesticAnimal);
+
     }
 
     private void wiseMovementForCat(Cat cat) {
@@ -1937,33 +1950,33 @@ private void dogsMoveWisely(){
             }
 
         }
-            if (minX != -1) {
+        if (minX != -1) {
 
-                if ((Math.abs(minX - x) > Math.abs(minY - y))&&(minY!=y)) {
-                    if (minY > y) y += 1;
-                    else  y -= 1;
+            if ((Math.abs(minX - x) > Math.abs(minY - y))&&(minY!=y)) {
+                if (minY > y) y += 1;
+                else  y -= 1;
 
-                }
-               else if ((Math.abs(minX - x) < Math.abs(minY - y))&&(minX!=x)) {
-                    if (minX > x) x += 1;
-                    else  x -= 1;
-
-                }
-               else if((minY!=y)&&(minX==x)){
-                    if (minY > y) y += 1;
-                    else  y -= 1;
-                }
-               else if((minY==y)&&(minX!=x)){
-                    if (minX > x) x += 1;
-                    else  x -= 1;
-                }
-                cat.yVal = y;
-                cat.xVal = x;
-
-            } else {
-
-                randomMove(cat);
             }
+            else if ((Math.abs(minX - x) < Math.abs(minY - y))&&(minX!=x)) {
+                if (minX > x) x += 1;
+                else  x -= 1;
+
+            }
+            else if((minY!=y)&&(minX==x)){
+                if (minY > y) y += 1;
+                else  y -= 1;
+            }
+            else if((minY==y)&&(minX!=x)){
+                if (minX > x) x += 1;
+                else  x -= 1;
+            }
+            cat.yVal = y;
+            cat.xVal = x;
+
+        } else {
+
+            randomMove(cat);
+        }
 
 
 
@@ -2066,6 +2079,7 @@ private void dogsMoveWisely(){
     }
 
     public void inquiry(String[] split) {
+        System.out.println("***********************");
         System.out.println("turns passed :  " + currentTurn);
         for (int i = 1; i < 6; i++) {
             for (int j = 1; j < 6; j++) {
@@ -2090,7 +2104,7 @@ private void dogsMoveWisely(){
             System.out.println(animal.getHealth());
 
         }
-        System.out.println("eggs");
+       /* System.out.println("eggs");
         for (Egg egg : eggslist) {
             System.out.print(egg.xVal + "  ");
             System.out.println(egg.yVal);
@@ -2150,7 +2164,7 @@ private void dogsMoveWisely(){
 
         }
 
-
+*/
         animalsEatingPlant();
         System.out.println("bearlists : ");
         for (Bear bear : bearslist) {
@@ -2160,6 +2174,7 @@ private void dogsMoveWisely(){
         for (Lion lion : lionslist) {
             System.out.println(lion.getxVal() + "  " + lion.getyVal() + "  " + lion.getName() + "  " + lion.health);
         }
+        System.out.println("***********************");
     }
 
     public void showgainedP() {

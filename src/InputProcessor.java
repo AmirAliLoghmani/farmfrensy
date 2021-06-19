@@ -3,11 +3,13 @@ import java.util.Scanner;
 
 public class InputProcessor {
 
+
     Scanner scanner = new Scanner(System.in);
     private Manager manager;
     public InputProcessor(Manager manager) {
         this.manager = manager;
     }
+
     private Scanner console = new Scanner(System.in);
     public boolean loginProcess() {
         System.out.println("enter your Username.");
@@ -41,6 +43,7 @@ public class InputProcessor {
 
     }
     public void run() {
+        manager.numberOfLevels=5;
         manager.updateEveryThing();
         boolean checking = false;
 
@@ -154,6 +157,7 @@ public class InputProcessor {
             FileReader fileReader3 = new FileReader("missions.txt");
             BufferedReader bufferedReader3 = new BufferedReader(fileReader3);
             manager.numberOfLevels = Integer.parseInt(bufferedReader3.readLine());
+            manager.numberOfLevels=5;
             String temp;
             int tt = 0;
             while (tt == 0) {
@@ -227,11 +231,13 @@ public class InputProcessor {
             String input;
             //test
 
+            manager.currentPlayer.setMoney(manager.currentPlayer.getMoney()+manager.leftPrize);
+            manager.leftPrize=0;
             //test end
             String[] split;
             while (!((input = scanner.nextLine()).equals("exit"))) {
                 split = input.split("\\s");
-                if (input.startsWith("BUY")) {
+                if (input.toUpperCase().startsWith("BUY")) {
                     processBuy(split);
                 } else if (input.equalsIgnoreCase("WELL"))
                     manager.wellWater();
@@ -251,6 +257,8 @@ public class InputProcessor {
                     processUpdateBuilding(split);
                 else if (input.toUpperCase().startsWith("TRUCK LOAD"))
                     processLoadTruck(split);
+                else if (input.toUpperCase().equals("INQUIRY"))
+                    manager.inquiry(split);
                 else if (input.toUpperCase().startsWith("TRUCK UNLOAD"))
                     processUnloadTruck(split);
 
@@ -291,9 +299,10 @@ public class InputProcessor {
         }
     }
     public boolean choosingLevel(){
+        System.out.println(manager.numberOfLevels);
         System.out.println("LEVELS : \n (you can log out either by writing 0)");
         for (int i = 1; i <= manager.currentPlayer.getLevel(); i++) {
-            if (i==4)break;                                     //fix it
+            if (i== manager.numberOfLevels+1)break;                                     //fix it
             System.out.println("level  "+ i);
         }
 
@@ -308,6 +317,8 @@ public class InputProcessor {
             if (Integer.parseInt(s)<=manager.currentPlayer.getLevel()) {
                 tem=1;
                 manager.currentLevel = Integer.parseInt(s);
+                manager.currentPlayer.setMoney(manager.currentPlayer.getMoney()+manager.leftPrize);
+                manager.leftPrize=0;
                 return true;
             }}
 
@@ -376,7 +387,7 @@ public class InputProcessor {
             manager.maxTime = Integer.parseInt(bufferedReader3.readLine());
             manager.prizeEndingQuick = Integer.parseInt(bufferedReader3.readLine());
 
-            manager.currentPlayer.setMoney(manager.initialCoins);
+            manager.currentPlayer.setMoney(manager.initialCoins+ manager.currentPlayer.getMoney());
             bufferedReader3.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -412,8 +423,13 @@ public class InputProcessor {
         }
     }
     public void processTurnTime(String split[]){
+        String[] s = new String[2];
         if (split.length==2) manager.turnTimes(split);
-        else {
+        else if(split.length==1) {
+            s[0]="TURN";
+            s[1]="1";
+            manager.turnTimes(s);
+        }else {
             Messages.invalidCommandMessage();
             manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid input");
         }
