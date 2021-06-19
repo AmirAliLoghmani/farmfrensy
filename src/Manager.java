@@ -1694,9 +1694,9 @@ private void destroyingProducts(){
     }
 
     private void movingWildAndDog() {
-
-/*        for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
-            int tem = random.nextInt(4);
+        int tem;
+      for (DefenderAnimal defenderAnimal : defenderAnimalslist) {
+             tem = random.nextInt(4);
             random.nextInt();
             if (defenderAnimal instanceof Dog) {
 
@@ -1705,51 +1705,47 @@ private void destroyingProducts(){
 
 
 
-                switch (tem) {
-                    case 0:
-                        if (defenderAnimal.xVal < 5)
-                            defenderAnimal.xVal += 1;
-                        else defenderAnimal.xVal -= 1;
-                    case 1:
-                        if (defenderAnimal.xVal > 0)
-                            defenderAnimal.xVal -= 1;
-                        else defenderAnimal.xVal += 1;
-                    case 2:
-                        if (defenderAnimal.yVal < 5)
-                            defenderAnimal.yVal += 1;
-                        else defenderAnimal.yVal -= 1;
-                    case 3:
-                        if (defenderAnimal.yVal > 0)
-                            defenderAnimal.yVal -= 1;
-                        else defenderAnimal.yVal += 1;
-                    default:
-                        break;
+                if(tem==0) {
+                    if (defenderAnimal.xVal < 5)
+                        defenderAnimal.xVal += 1;
+                    else defenderAnimal.xVal -= 1;
+                }else if(tem==1) {
+                    if (defenderAnimal.xVal > 0)
+                        defenderAnimal.xVal -= 1;
+                    else defenderAnimal.xVal += 1;
+                }else if(tem==2) {
+                    if (defenderAnimal.yVal < 5)
+                        defenderAnimal.yVal += 1;
+                    else defenderAnimal.yVal -= 1;
+                }else if(tem==3) {
+                    if (defenderAnimal.yVal > 0)
+                        defenderAnimal.yVal -= 1;
+                    else defenderAnimal.yVal += 1;
                 }
             }
-        }*/
-        dogsMoveWisely();
-        for (WildAnimal wildAnimal : wildAnimalsList) {
-            int tem = random.nextInt(4);
+        }
 
-            switch (tem) {
-                case 0:
-                    if (wildAnimal.xVal < 5)
-                        wildAnimal.xVal += 1;
-                    else wildAnimal.xVal -= 1;
-                case 1:
-                    if (wildAnimal.xVal > 0)
-                        wildAnimal.xVal -= 1;
-                    else wildAnimal.xVal += 1;
-                case 2:
-                    if (wildAnimal.yVal < 5)
-                        wildAnimal.yVal += 1;
-                    else wildAnimal.yVal -= 1;
-                case 3:
-                    if (wildAnimal.yVal > 0)
-                        wildAnimal.yVal -= 1;
-                    else wildAnimal.yVal += 1;
-                default:
-                    break;
+
+        for (WildAnimal wildAnimal : wildAnimalsList) {
+
+            tem=random.nextInt(4);
+
+            if(tem==0) {
+                if (wildAnimal.xVal < 5)
+                    wildAnimal.xVal += 1;
+                else wildAnimal.xVal -= 1;
+            }else if(tem==1) {
+                if (wildAnimal.xVal > 0)
+                    wildAnimal.xVal -= 1;
+                else wildAnimal.xVal += 1;
+            }else if(tem==2) {
+                if (wildAnimal.yVal < 5)
+                    wildAnimal.yVal += 1;
+                else wildAnimal.yVal -= 1;
+            }else if(tem==3) {
+                if (wildAnimal.yVal > 0)
+                    wildAnimal.yVal -= 1;
+                else wildAnimal.yVal += 1;
             }
 
         }
@@ -2032,26 +2028,22 @@ private void dogsMoveWisely(){
         int tem = random.nextInt(4);
 
 
-        switch (tem) {
-
-            case 0:
-                if (animal.xVal < 5)
-                    animal.xVal += 1;
-                else animal.xVal -= 1;
-            case 1:
-                if (animal.xVal > 0)
-                    animal.xVal -= 1;
-                else animal.xVal += 1;
-            case 2:
-                if (animal.yVal < 5)
-                    animal.yVal += 1;
-                else animal.yVal -= 1;
-            case 3:
-                if (animal.yVal > 0)
-                    animal.yVal -= 1;
-                else animal.yVal += 1;
-           default:
-                break;
+        if(tem==0) {
+            if (animal.xVal < 5)
+                animal.xVal += 1;
+            else animal.xVal -= 1;
+        }else if(tem==1) {
+            if (animal.xVal > 0)
+                animal.xVal -= 1;
+            else animal.xVal += 1;
+        }else if(tem==2) {
+            if (animal.yVal < 5)
+                animal.yVal += 1;
+            else animal.yVal -= 1;
+        }else if(tem==3) {
+            if (animal.yVal > 0)
+                animal.yVal -= 1;
+            else animal.yVal += 1;
         }
     }
 
