@@ -23,10 +23,11 @@ public class Manager {
     int numberOfLevels;
     int initialCoins;
     int numberOfTasks;
-    int chickenGoal = 0;
-    int turkeyGoal = 0;
-    int buffaloGoal = 0;
-    int coinGoal = 0;
+    int chickenGoal = -1;
+    int tigerGoal = -1;
+    int turkeyGoal = -1;
+    int buffaloGoal = -1;
+    int coinGoal = -1;
     int numberOfWildAnimals = 0;
     Log log;
     ArrayList<Product> onMapProduct = new ArrayList<>();
@@ -76,6 +77,7 @@ public class Manager {
 
     public void deleteEveryThing() {
         domesticAnimalsList.clear();
+        onMapProduct.clear();
         windMillslist.clear();
         fabricMakerslist.clear();
         bearProductslist.clear();
@@ -103,8 +105,8 @@ public class Manager {
         flourslist.clear();
         fabriclist.clear();
         defenderAnimalslist.clear();
-
-        currentPlayer.setLevel(currentLevel);
+        if(currentLevel>currentPlayer.getLevel())
+            currentPlayer.setLevel(currentLevel);
 
 
     }
@@ -785,9 +787,9 @@ public class Manager {
                 playersList.add(new Player(info.split("\\s")[0], info.split("\\s")[1], Integer.parseInt(info.split("\\s")[2])));
             }
             bufferedReader2.close();
-            for (Player player : playersList) {
+           /* for (Player player : playersList) {
                 System.out.println(player.getUserName() + "  " + player.getPassWord() + " " + player.getLevel());
-            }
+            }*/
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -883,6 +885,7 @@ public class Manager {
         }
     }
 
+
     public void turnTimes(String split[]) {
         int n = Integer.parseInt(split[1]);
         for (int i = 0; i < n; i++) {
@@ -891,6 +894,7 @@ public class Manager {
     }
 
     int chickencount = 0;
+    int tigercount = 0;
     int turkeycount = 0;
     int buffalocount = 0;
 
@@ -915,6 +919,7 @@ public class Manager {
         wildsCageLevelDecrease();
         showGaindProducts();
         chickencount = 0;
+        tigercount=0;
         turkeycount = 0;
         buffalocount = 0;
         for (DomesticAnimal domesticAnimal : domesticAnimalsList) {
@@ -925,17 +930,25 @@ public class Manager {
             else if (domesticAnimal.getName().equals("buffalo"))
                 buffalocount++;
         }
+        for (Product product : gaindproductslist) {
+            if (product.getName().equals("tigerproduct"))
+                tigercount++;
+        }
+        //tigercount=tigerProductslist.size();
+        //System.out.println("tigerProductslist"+tigerProductslist);
 
 
-        if (chickencount >= chickenGoal)
-            chickenGoal = -1;
-        if (turkeycount >= turkeyGoal)
-            turkeyGoal = -1;
-        if (buffalocount >= buffaloGoal)
-            buffaloGoal = -1;
-        if (coinGoal <= currentPlayer.getMoney())
-            coinGoal = -1;
-        if (chickenGoal < 1 && turkeyGoal < 1 && buffaloGoal < 1 && coinGoal <= currentPlayer.getMoney()) {
+        if (chickencount >= chickenGoal && chickenGoal!= -1)
+            chickenGoal = -2;
+        if (tigercount >= tigerGoal && tigerGoal!= -1)
+            tigerGoal = -2;
+        if (turkeycount >= turkeyGoal && turkeyGoal!=-1)
+            turkeyGoal = -2;
+        if (buffalocount >= buffaloGoal &&buffaloGoal!=-1)
+            buffaloGoal = -2;
+        if (coinGoal <= currentPlayer.getMoney() && coinGoal!=-1)
+            coinGoal = -2;
+        if (chickenGoal < 1 && turkeyGoal < 1 && buffaloGoal < 1 && coinGoal <= currentPlayer.getMoney()&&tigerGoal<1) {
             currentPlayer.setMoney(0);
             if (currentTurn<maxTime){
                 System.out.println("prize earned");
@@ -950,20 +963,39 @@ public class Manager {
             //int wildAnimalTime[][];
             maxTime = 0;
             prizeEndingQuick = 0;
-            chickenGoal = 0;
-            turkeyGoal = 0;
-            buffaloGoal = 0;
-            coinGoal = 0;
+            chickenGoal = -1;
+            tigerGoal=-1;
+            turkeyGoal = -1;
+            buffaloGoal = -1;
+            coinGoal = -1;
             return;
         }
         System.out.println("GOALS :");
-        if (chickenGoal != -1)
+
+        if (chickenGoal == -2)
+            System.out.println("chicken "+(char)10003);
+        if (tigerGoal == -2)
+            System.out.println("tiger "+(char)10003);
+
+        if (turkeyGoal == -2)
+            System.out.println("turkey "+(char)10003);
+        if (buffaloGoal == -2)
+            System.out.println("buffalo "+(char)10003);
+        if (coinGoal == -2)
+            System.out.println("CoinGoal "+(char)10003);
+
+
+
+        if (chickenGoal != -1&&chickenGoal != -2 )
             System.out.println("chicken :     catched  :  " + chickencount + "  goal  :  " + chickenGoal);
-        if (turkeyGoal != -1)
+        if (tigerGoal != -1&&tigerGoal != -2 )
+            System.out.println("tiger :     catched  :  " + tigercount + "  goal  :  " + tigerGoal);
+
+        if (turkeyGoal != -1&&turkeyGoal != -2)
             System.out.println("turkey :     catched  :  " + turkeycount + "  goal  :  " + turkeyGoal);
-        if (buffaloGoal != -1)
+        if (buffaloGoal != -1&&buffaloGoal != -2)
             System.out.println("buffalo :     catched  :  " + buffalocount + "  goal  :  " + buffaloGoal);
-        if (coinGoal != -1)
+        if (coinGoal != -1&&coinGoal != -2)
             System.out.println("CoinGoal :     catched  :  " + coinGoal + "  goal  :  " + currentPlayer.getMoney());
 
         //System.out.println("PRODUCTS ON MAP : ");
@@ -1265,9 +1297,16 @@ public class Manager {
         for (Bear bear : bearslist) {
             System.out.println(bear.getxVal() + "  " + bear.getyVal() + "  " + bear.getName() + "  " + bear.health);
         }
+
         System.out.println("lionslists : ");
         for (Lion lion : lionslist) {
             System.out.println(lion.getxVal() + "  " + lion.getyVal() + "  " + lion.getName() + "  " + lion.health);
+        }
+        System.out.println("tigerslists : "+tigerslist.size());
+
+        for (Tiger tiger : tigerslist) {
+            System.out.println(tiger.getxVal() + "  " + tiger.getyVal() + "  " + tiger.getName() + "  " + tiger.health);
+
         }
 
         System.out.println("cats list");
@@ -1686,7 +1725,7 @@ public class Manager {
 
     }
 
-    private void animalMakingProduct(DomesticAnimal domesticAnimal) {
+    private void animalMakingProduct(DomesticAnimal domesticAnimal){
         if (domesticAnimal.getName().equals("chicken")) {// TODO: 6/16/2021
             Egg egg = new Egg(domesticAnimal.getxVal(), domesticAnimal.getyVal(), "egg");
             eggslist.add(egg);
@@ -1701,6 +1740,7 @@ public class Manager {
             onMapProduct.add(milk);
         }
     }
+
 
     private void movingWildAndDog() {
         int tem;
@@ -2090,6 +2130,9 @@ public class Manager {
         System.out.println("GOALS :");
         if (chickenGoal != -1)
             System.out.println("chicken :     catched  :  " + chickencount + "  goal  :  " + chickenGoal);
+        if (tigerGoal != -1)
+            System.out.println("tiger :     catched  :  " + tigercount + "  goal  :  " + tigerGoal);
+
         if (turkeyGoal != -1)
             System.out.println("turkey :     catched  :  " + turkeycount + "  goal  :  " + turkeyGoal);
         if (buffaloGoal != -1)

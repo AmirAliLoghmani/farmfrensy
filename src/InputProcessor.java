@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 import java.util.Scanner;
 
@@ -145,6 +146,8 @@ public class InputProcessor {
     }
 
     public void startPanel() {
+        manager.deleteEveryThing();
+
         if(!choosingLevel())
             return;
         Messages.startMessage();
@@ -164,6 +167,7 @@ public class InputProcessor {
                 if ((temp = bufferedReader3.readLine()).equals("end")) {
                     Messages.fileEndedMessage();
                     manager.status = "finished";
+                    System.out.println("last");
                     // startPanel();
                     tt = 1;
                     return;
@@ -188,7 +192,11 @@ public class InputProcessor {
                     System.out.println("2");
                     System.out.println("chicken");
                     manager .chickenGoal = Integer.parseInt(goal.split("\\s")[1]);
-                } else if (goal.startsWith("turkey"))
+                }
+                else if (goal.startsWith("tiger")){
+                    manager.tigerGoal = Integer.parseInt(goal.split("\\s")[1]);
+                }
+                else if (goal.startsWith("turkey"))
                     manager.turkeyGoal = Integer.parseInt(goal.split("\\s")[1]);
                     //  else if ((goal = bufferedReader3.readLine()).startsWith("buffalo"))
                     //    buffaloGoal = Integer.parseInt(goal.split("\\s")[1]);
@@ -207,6 +215,9 @@ public class InputProcessor {
                     manager.bearArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
                 if (tem.startsWith("lion"))
                     manager.lionArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
+                if (tem.startsWith("tiger"))
+                    manager.tigerArrivalTime.add(Integer.parseInt(tem.split("\\s")[1]));
+
             }
 
             manager.maxTime = Integer.parseInt(bufferedReader3.readLine());
@@ -221,50 +232,67 @@ public class InputProcessor {
 
         System.out.println("1 : Start\n2: Log out\n3: Settings");
         String choice = scanner.nextLine();
-        if (choice.equals("1")) {
-            for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 6; j++) {
-                    manager.grassMap[i][j] = 0;
+        boolean correct=false;
+        while (!correct){
+
+
+            if (choice.equals("1")) {
+                correct=true;
+                for (int i = 0; i < 6; i++) {
+                    for (int j = 0; j < 6; j++) {
+                        manager.grassMap[i][j] = 0;
+                    }
                 }
-            }
-            manager.waterTank = new WaterTank(0);
-            String input;
-            //test
+                manager.waterTank = new WaterTank(0);
+                String input;
+                //test
 
-            manager.currentPlayer.setMoney(manager.currentPlayer.getMoney()+manager.leftPrize);
-            manager.leftPrize=0;
-            //test end
-            String[] split;
-            while (!((input = scanner.nextLine()).equals("exit"))) {
-                split = input.split("\\s");
-                if (input.toUpperCase().startsWith("BUY")) {
-                    processBuy(split);
-                } else if (input.equalsIgnoreCase("WELL"))
-                    manager.wellWater();
-                else if (input.toUpperCase().startsWith("PLANT"))
-                    processPlant(split);
-                else if (input.toUpperCase().startsWith("CAGE"))
-                    processPutCage(split);
-                else if (input.toUpperCase().startsWith("TURN"))
-                    processTurnTime(split);
-                else if (input.toUpperCase().startsWith("PICK UP"))
-                    processPickUp(split);
-                else if (input.toUpperCase().startsWith("MAKE"))
-                    processMakeBuilding(split);
-                else if (input.toUpperCase().startsWith("WORK"))
-                    processWorkingBuilding(split);
-                else if (input.toUpperCase().startsWith("UPDATE"))
-                    processUpdateBuilding(split);
-                else if (input.toUpperCase().startsWith("TRUCK LOAD"))
-                    processLoadTruck(split);
-                else if (input.toUpperCase().equals("INQUIRY"))
-                    manager.inquiry(split);
-                else if (input.toUpperCase().startsWith("TRUCK UNLOAD"))
-                    processUnloadTruck(split);
+                manager.currentPlayer.setMoney(manager.currentPlayer.getMoney()+manager.leftPrize);
+                manager.leftPrize=0;
+                //test end
+                String[] split;
+                while (!((input = scanner.nextLine()).equals("exit"))) {
+                    try {
 
-                else if (input.equalsIgnoreCase("TRUCK GO"))
-                    manager.sendingTruck();
-                if (manager.status.equals("win")||manager.status.equals("finished")) {
+
+                    split = input.split("\\s");
+                    if (input.toUpperCase().startsWith("BUY")) {
+                        processBuy(split);
+                    } else if (input.equalsIgnoreCase("WELL"))
+                        manager.wellWater();
+                    else if (input.toUpperCase().startsWith("PLANT"))
+                        processPlant(split);
+                    else if (input.toUpperCase().startsWith("CAGE"))
+                        processPutCage(split);
+                    else if (input.toUpperCase().startsWith("TURN"))
+                        processTurnTime(split);
+                    else if (input.toUpperCase().startsWith("PICK UP"))
+                        processPickUp(split);
+                    else if (input.toUpperCase().startsWith("MAKE"))
+                        processMakeBuilding(split);
+                    else if (input.toUpperCase().startsWith("WORK"))
+                        processWorkingBuilding(split);
+                    else if (input.toUpperCase().startsWith("UPDATE"))
+                        processUpdateBuilding(split);
+                    else if (input.toUpperCase().startsWith("TRUCK LOAD"))
+                        processLoadTruck(split);
+                    else if (input.toUpperCase().equals("INQUIRY"))
+                        manager.inquiry(split);
+                    else if (input.toUpperCase().startsWith("TRUCK UNLOAD"))
+                        processUnloadTruck(split);
+
+                    else if (input.equalsIgnoreCase("TRUCK GO"))
+                        manager.sendingTruck();
+                    else {
+                        Messages.invalidCommandMessage();
+                        manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid command");
+                    }
+                    }
+                    catch (Exception e){
+                        Messages.invalidCommandMessage();
+                        manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid command");
+                    }
+                    if (manager.status.equals("win")||manager.status.equals("finished")) {
                    /* System.out.println("you finished the level");
                     manager.log.infoLog(manager.currentPlayer.getUserName(),"level is finished");
                     manager.status = "progress";
@@ -272,37 +300,58 @@ public class InputProcessor {
                     manager.currentLevel++;
                     readingOrderFile();
                     saveEveryThing();*/
-                    if (manager.currentPlayer.getLevel()==manager.currentLevel  &&  manager.currentLevel!=manager.numberOfLevels)
-                        manager.currentPlayer.setLevel(manager.currentPlayer.getLevel()+1);
-                    System.out.println("duddd"); saveEveryThing();
-                    if (choosingLevel()){
+                        if (manager.currentPlayer.getLevel()==manager.currentLevel  &&  manager.currentLevel!=6)
+                            manager.currentPlayer.setLevel(manager.currentPlayer.getLevel()+1);
+                        //System.out.println("duddd bro");
+                        saveEveryThing();
+                        if (choosingLevel()){
 
-                        System.out.println("saving...");
+                            System.out.println("saving...");
 
-                        manager.status = "progress";
-                        readingOrderFile();
+                            manager.status = "progress";
+                            readingOrderFile();
 
 
+                        }
+                        else{
+                            System.out.println("status"+ manager.status);
+                            manager.status="progress";
+                            return;
+                        }
+                        //startPanel();
                     }
-                    else return;
-                    //startPanel();
+                    if (manager.status.equals("finished"))
+                        // saveEveryThing();
+                        return;
+
                 }
-                if (manager.status.equals("finished"))
-                    // saveEveryThing();
-                    return;
+            } else if (choice.equals("2")) {
+                correct=true;
+                saveEveryThing();
+                logoutProcess();
+            } else if (choice.equals("3")) {
+                correct=true;
+                saveEveryThing();
             }
-        } else if (choice.equals("2")) {
-            saveEveryThing();
-            logoutProcess();
-        } else if (choice.equals("3")) {
-            saveEveryThing();
+            else {
+                Messages.invalidCommandMessage();
+                manager.log.errorLog(manager.currentPlayer.getUserName(),"invalid command");
+            }
+
+
+
+
+
+
+
         }
+
     }
     public boolean choosingLevel(){
         System.out.println(manager.numberOfLevels);
         System.out.println("LEVELS : \n (you can log out either by writing 0)");
         for (int i = 1; i <= manager.currentPlayer.getLevel(); i++) {
-            if (i== manager.numberOfLevels+1)break;                                     //fix it
+            if (i== 6)break;                                     //fix it
             System.out.println("level  "+ i);
         }
 
@@ -339,6 +388,7 @@ public class InputProcessor {
                 if ((temp = bufferedReader3.readLine()).equals("end")) {
                     System.out.println("file ended");
                     manager.status = "finished";
+                    System.out.println("creed");
                     // startPanel();
                     tt = 1;
                     return;
@@ -363,7 +413,10 @@ public class InputProcessor {
                     System.out.println("2");
                     System.out.println("chicken");
                     manager.chickenGoal = Integer.parseInt(goal.split("\\s")[1]);
-                } else if (goal.startsWith("turkey"))
+                }
+                else if (goal.startsWith("tiger")){
+                    manager.tigerGoal = Integer.parseInt(goal.split("\\s")[1]);
+                }else if (goal.startsWith("turkey"))
                     manager.turkeyGoal = Integer.parseInt(goal.split("\\s")[1]);
                     //  else if ((goal = bufferedReader3.readLine()).startsWith("buffalo"))
                     //    buffaloGoal = Integer.parseInt(goal.split("\\s")[1]);
